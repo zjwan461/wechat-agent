@@ -1,18 +1,25 @@
 from flask import Flask, request, g, jsonify
+from werkzeug.exceptions import InternalServerError
+
 from src.wechat_agent.constants import token_header, token_prefix, token_white_list, gitee_url, github_url
 from src.wechat_agent.domain.ajax_result import success, error
 from src.wechat_agent.service.jwt_util import verify_token
 import re
+from src.wechat_agent.logger_config import get_logger
 
+logger = get_logger()
 app = Flask(__name__)
 
 
 @app.before_request
 def auth():
+    1 / 0
     if request.path in token_white_list:
+        logger.info(f"{request.path} match token white list, no need auth")
         return None
     for rule in token_white_list:
         if bool(re.fullmatch(rule, request.path)):
+            logger.info(f"{request.path} match token white list, no need auth")
             return None
     headers = request.headers
     bearer_token = headers.get(token_header)
@@ -36,6 +43,12 @@ def hello():
 @app.route("/api/base/git-repo")
 def git_repo():
     return jsonify(success({"giteeUrl": gitee_url, "githubUrl": github_url}))
+
+
+@app.errorhandler(500)
+def error_handle(e):
+    logger.error(e)
+    return jsonify(error()), 500
 
 
 if __name__ == "__main__":
