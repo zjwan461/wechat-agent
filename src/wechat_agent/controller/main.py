@@ -1,5 +1,4 @@
 from flask import Flask, request, g, jsonify
-from werkzeug.exceptions import InternalServerError
 
 from src.wechat_agent.constants import token_header, token_prefix, token_white_list, gitee_url, github_url
 from src.wechat_agent.domain.ajax_result import success, error
@@ -13,7 +12,6 @@ app = Flask(__name__)
 
 @app.before_request
 def auth():
-    1 / 0
     if request.path in token_white_list:
         logger.info(f"{request.path} match token white list, no need auth")
         return None
