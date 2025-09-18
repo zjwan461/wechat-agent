@@ -1,0 +1,23 @@
+{
+  "id": "4950057",
+  "name": "no name",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "5387463",
+      "name": "机器人",
+      "font_class": "jiqiren",
+      "unicode": "eada",
+      "unicode_decimal": 60122
+    },
+    {
+      "icon_id": "5387814",
+      "name": "机器人_o",
+      "font_class": "jiqiren_o",
+      "unicode": "eb62",
+      "unicode_decimal": 60258
+    }
+  ]
+}
