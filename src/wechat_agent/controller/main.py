@@ -2,6 +2,7 @@ from flask import Flask, request, g, jsonify
 from src.wechat_agent.constants import token_header, token_prefix, token_white_list, gitee_url, github_url
 from src.wechat_agent.domain.ajax_result import success, error
 from src.wechat_agent.service.jwt_util import verify_token
+import re
 
 app = Flask(__name__)
 
@@ -10,6 +11,9 @@ app = Flask(__name__)
 def auth():
     if request.path in token_white_list:
         return None
+    for rule in token_white_list:
+        if bool(re.fullmatch(rule, request.path)):
+            return None
     headers = request.headers
     bearer_token = headers.get(token_header)
     if not bearer_token or not bearer_token.startswith(token_prefix):
