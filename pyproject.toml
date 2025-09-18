@@ -27,7 +27,8 @@ dependencies = [
   "langchain-community~=0.3.27",
   "langchain-text-splitters~=0.3.11",
   "langchain-core~=0.3.76",
-  "langchain-experimental~=0.3.4"
+  "langchain-experimental~=0.3.4",
+  "flask~=3.1.2"
 ]
 
 [project.urls]

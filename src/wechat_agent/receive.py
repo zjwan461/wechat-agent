@@ -14,8 +14,8 @@ def on_message(msg, chat):
     if msg.type in ('image', 'video'):
         print(msg.download())
 
-    if isinstance(msg, FriendMessage):
-        print(msg)
+    # if isinstance(msg, FriendMessage):
+    #     print(msg)
         # time.sleep(len(msg.content))
         # msg.quote('收到')
 
