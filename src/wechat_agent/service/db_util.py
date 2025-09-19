@@ -38,6 +38,14 @@ class SysInfo(BaseEntity):
     email = Column(String(50), nullable=False)
 
 
+class Setting(BaseEntity):
+    __tablename__ = 'setting'
+    id = Column(Integer, primary_key=True)
+    model_save_dir = Column(String(255), nullable=False)
+    proxy_host = Column(String(255))
+    proxy_port = Column(Integer)
+
+
 class SqliteSqlalchemy(object):
     def __init__(self):
         # 创建Sqlite连接引擎

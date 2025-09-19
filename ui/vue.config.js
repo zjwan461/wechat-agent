@@ -3,7 +3,7 @@ module.exports = {
   lintOnSave: false,
 
   devServer: {
-    open: false,
+    open: true,
     host: '0.0.0.0',
     port: 8001,
     https: false,

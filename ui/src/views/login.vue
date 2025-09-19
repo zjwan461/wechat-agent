@@ -15,7 +15,7 @@
         <el-form-item prop="yzm">
           <el-row>
             <el-col :span="18">
-              <el-input v-model="loginForm.yzm" prefix-icon="el-icon-info" placeholder="验证码"/>
+              <el-input v-model="loginForm.yzm" prefix-icon="el-icon-info" placeholder="验证码" :maxlength="4" show-word-limit/>
             </el-col>
             <el-col :span="6">
               <img :src="this.yzmImg" style="width: 100px; padding: 0 5px;" @click="getYzm">

@@ -1,6 +1,7 @@
 import logging
 import os
 from logging.handlers import TimedRotatingFileHandler
+from pathlib import Path
 
 
 def get_logger(name=__name__, log_level=logging.INFO):
@@ -35,7 +36,7 @@ def get_logger(name=__name__, log_level=logging.INFO):
 
     # 2. 文件处理器 - 按天分割日志文件，保留30天
     # 创建日志目录
-    log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+    log_dir = str(Path(__file__).parent.parent.parent / "logs")
     os.makedirs(log_dir, exist_ok=True)
 
     # 日志文件名格式

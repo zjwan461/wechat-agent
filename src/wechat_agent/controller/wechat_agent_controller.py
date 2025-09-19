@@ -3,16 +3,17 @@ from pathlib import Path
 
 from flask import Flask, session, request, g, jsonify
 from src.wechat_agent.constants import SECRET_KEY, sys_info_id, token_header, token_prefix, token_white_list, gitee_url, \
-    github_url, server_host, server_port
+    github_url, server_host, server_port, setting_id
 from src.wechat_agent.domain.ajax_result import success, error, build
 from src.wechat_agent.service.jwt_util import verify_token, generate_token
 import re
 from src.wechat_agent.logger_config import get_logger
-from src.wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
+from src.wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo, Setting
 from src.wechat_agent.__about__ import __version__ as version
 from src.wechat_agent.service.md5_util import calculate_md5
 from src.wechat_agent.service.captcha_util import generate_base64_captcha
 import src.wechat_agent.service.systemInfo_util as systemInfo_util
+from src.wechat_agent.controller.service_error import ApiError
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -35,6 +36,7 @@ def auth():
     token = bearer_token[len(token_prefix):]
     payload = verify_token(token)
     if not payload["valid"]:
+        session.clear()
         return jsonify(error(payload["error"])), 401
     g.user_id = payload["payload"]["user_id"]
     return None
@@ -62,22 +64,28 @@ def git_repo():
     return jsonify(success({"giteeUrl": gitee_url, "githubUrl": github_url}))
 
 
-@app.errorhandler(500)
-def error_handle(e):
+@app.errorhandler(ApiError)
+def error_handle(e: ApiError):
     logger.error(e)
-    return jsonify(error()), 500
+    return jsonify(error(e.message)), 200
+
+
+@app.errorhandler(500)
+def unknow_error_handle(e: Exception):
+    logger.error(e)
+    return jsonify(error("system is too busy")), 500
 
 
 @app.route("/api/login", methods=["POST"])
 def login():
     req = request.json
     if session.get('code').upper() != req["yzm"].upper():
-        return jsonify(error("验证码错误"))
+        raise ApiError("验证码错误")
     sql_session = SqliteSqlalchemy().session
     sys_info = sql_session.query(SysInfo).filter(SysInfo.username == req["username"]).filter(
         SysInfo.password == calculate_md5(req["password"])).one_or_none()
     if sys_info is None:
-        return jsonify(error("账号或密码错误"))
+        raise ApiError("用户名或密码错误")
     session["sys_info"] = sys_info.to_dic()
 
     token = token_prefix + generate_token(sys_info.username)
@@ -105,23 +113,37 @@ def get_yzm():
 def register():
     req = request.json
     session = SqliteSqlalchemy().session
-    sys_info = session.query(SysInfo).get(sys_info_id)
-    os_info = systemInfo_util.get_os_info()
-    gpu_platform = "cuda" if systemInfo_util.is_cuda_available() else "cpu"
-    if sys_info is None:
-        sys_info = SysInfo(id=sys_info_id, os_arch=os_info['arch'], platform=os_info['os'], gpu_platform=gpu_platform,
-                           version=version, username=req["username"],
-                           password=calculate_md5(req["password"]), email=req["email"])
-        session.add(sys_info)
-    else:
-        sys_info.os_arch = os_info['arch']
-        sys_info.platform = os_info['os']
-        sys_info.gpu_platform = gpu_platform
-        sys_info.version = version
-        sys_info.username = req["username"]
-        sys_info.password = calculate_md5(req["password"])
-        sys_info.email = req["email"]
-    session.commit()
+    try:
+        sys_info = session.query(SysInfo).get(sys_info_id)
+        os_info = systemInfo_util.get_os_info()
+        gpu_platform = "cuda" if systemInfo_util.is_cuda_available() else "cpu"
+        if sys_info is None:
+            sys_info = SysInfo(id=sys_info_id, os_arch=os_info['arch'], platform=os_info['os'],
+                               gpu_platform=gpu_platform,
+                               version=version, username=req["username"],
+                               password=calculate_md5(req["password"]), email=req["email"])
+            session.add(sys_info)
+        else:
+            sys_info.os_arch = os_info['arch']
+            sys_info.platform = os_info['os']
+            sys_info.gpu_platform = gpu_platform
+            sys_info.version = version
+            sys_info.username = req["username"]
+            sys_info.password = calculate_md5(req["password"])
+            sys_info.email = req["email"]
+
+        setting = session.query(Setting).get(setting_id)
+        if setting is None:
+            setting = Setting(id=setting_id, model_save_dir=str(Path(__file__).parent.parent.parent / "models"))
+            session.add(setting)
+        else:
+            setting.model_save_dir = str(Path(__file__).parent.parent.parent / "models")
+        session.commit()
+    except Exception as e:
+        logger.error(e)
+        session.rollback()
+    finally:
+        session.close()
     return jsonify(success())
 
 
@@ -147,3 +169,37 @@ def get_sys_info():
               "os": systemInfo_util.get_os_info(), "sysInfo": systemInfo_util.get_sys_info(),
               "base_url": f"http://{server_host}:{server_port}"}
     return jsonify(success(result))
+
+
+@app.route("/api/setting")
+def get_setting():
+    session = SqliteSqlalchemy().session
+    setting = session.query(Setting).get(setting_id)
+    if setting is None:
+        return jsonify(success())
+    else:
+        result = setting.to_dic()
+        return jsonify(success(result))
+
+
+@app.route("/api/setting", methods=["POST"])
+def update_setting():
+    req = request.json
+    session = SqliteSqlalchemy().session
+    try:
+        setting = session.query(Setting).get(setting_id)
+        if setting is None:
+            setting = Setting(id=setting_id, model_save_dir=req["model_save_dir"], proxy_host=req["proxy_host"],
+                              proxy_port=req["proxy_port"])
+            session.add(setting)
+        else:
+            setting.model_dir_dir = req["model_save_dir"]
+            setting.proxy_host = req["proxy_host"]
+            setting.proxy_port = req["proxy_port"]
+        session.commit()
+        return jsonify(success())
+    except Exception as e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
