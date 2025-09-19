@@ -28,7 +28,9 @@ dependencies = [
   "langchain-text-splitters~=0.3.11",
   "langchain-core~=0.3.76",
   "langchain-experimental~=0.3.4",
-  "flask~=3.1.2"
+  "flask~=3.1.2",
+  "pyjwt~=2.10.1",
+
 ]
 
 [project.urls]

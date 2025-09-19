@@ -16,7 +16,7 @@ export function getSysInfo() {
 
 export function login(data) {
   return request({
-    url: '/api/auth/login',
+    url: '/api/login',
     method: 'post',
     data: data
   })

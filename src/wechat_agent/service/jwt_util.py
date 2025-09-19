@@ -1,9 +1,10 @@
 import jwt
 import datetime
 from jwt import exceptions
+from src.wechat_agent.constants import SECRET_KEY
 
 # 密钥（实际应用中应妥善保管，不要硬编码）
-SECRET_KEY = "your-secret-key-keep-it-safe"
+
 
 
 def generate_token(user_id):

@@ -8,7 +8,7 @@ wx = WeChat()
 def on_message(msg, chat):
     text = f'[{msg.type} {msg.attr}]{chat} - {msg.content}'
     print(text)
-    with open('msgs.txt', 'a', encoding='utf-8') as f:
+    with open('../msgs.txt', 'a', encoding='utf-8') as f:
         f.write(text + '\n')
 
     if msg.type in ('image', 'video'):

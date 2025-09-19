@@ -129,7 +129,6 @@ export default {
           login(this.loginForm)
             .then(res => {
               if (res.code === 0) {
-                alert(1)
                 let bearerToken = res.data
                 if (bearerToken.indexOf('Bearer') === -1) {
                   this.$message.error('非法的token')

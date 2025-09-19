@@ -53,8 +53,8 @@ NProgress.configure({
 router.beforeEach((to, from, next) => {
   NProgress.start()
   if (to.path === '/login' || to.path === '/register') return next()
-  const login = window.sessionStorage.getItem('login')
-  if (!login) return next('/login')
+  const token = window.sessionStorage.getItem('Authorization')
+  if (!token) return next('/login')
   next()
 })
 

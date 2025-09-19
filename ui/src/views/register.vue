@@ -62,10 +62,9 @@
 </template>
 
 <script>
-import {getRequestBodyJson} from '@/common/common'
+import {register} from '@/apis/register'
 
 export default {
-  name: 'register',
   data() {
     const rePwd = (rule, value, callback) => {
       if (this.registerForm.password !== value) {
@@ -98,7 +97,12 @@ export default {
     onSubmit(value) {
       this.$refs[value].validate(valid => {
         if (!valid) return
-        
+        register(this.registerForm).then(response => {
+          if (response.code === 0) {
+            this.$message.success('注册成功,即将返回登录页')
+            this.$router.push('/login')
+          }
+        })
       })
     }
   }
