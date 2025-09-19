@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from flask import Flask, session, request, g, jsonify
+from flask import Flask, session, request, g, jsonify, current_app
 from src.wechat_agent.constants import SECRET_KEY, sys_info_id, token_header, token_prefix, token_white_list, gitee_url, \
     github_url, server_host, server_port, setting_id
 from src.wechat_agent.domain.ajax_result import success, error, build
@@ -38,6 +38,11 @@ def auth():
     if not payload["valid"]:
         session.clear()
         return jsonify(error(payload["error"])), 401
+    with app.app_context():
+        login_token = current_app.config.get("token", {})
+        if payload["payload"]["user_id"] not in login_token or login_token[
+            payload["payload"]["user_id"]] != bearer_token:
+            return jsonify(error("token已过期")), 401
     g.user_id = payload["payload"]["user_id"]
     return None
 
@@ -89,6 +94,10 @@ def login():
     session["sys_info"] = sys_info.to_dic()
 
     token = token_prefix + generate_token(sys_info.username)
+    with app.app_context():
+        login_token = current_app.config.get("token", {})
+        login_token[sys_info.username] = token
+        current_app.config["token"] = login_token
     return jsonify(success(token))
 
 
@@ -159,6 +168,11 @@ def nav():
 @app.route("/api/logout")
 def logout():
     session.clear()
+    username = g.user_id
+    with app.app_context():
+        login_token = current_app.config.get("token", {})
+        login_token.pop(username, None)
+        current_app.config["token"] = login_token
     return jsonify(success())
 
 
