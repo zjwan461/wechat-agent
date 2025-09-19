@@ -5,12 +5,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    sysInfo: {
+    serverInfo: {
     }
   },
   mutations: {
-    setSysInfo(state, sysInfo) {
-      state.sysInfo = sysInfo
+    setServerInfo(state, serverInfo) {
+      state.serverInfo = serverInfo
     }
   },
   actions: {

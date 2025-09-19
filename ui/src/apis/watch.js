@@ -1,8 +1,8 @@
 import request from '../common/request'
 
-export function getSysInfo() {
-    return request({
-        url: '/api/sys-info',
-        method: 'get'
-    })
+export function watchInfo() {
+  return request({
+    url: '/api/watch/info',
+    method: 'get'
+  })
 }

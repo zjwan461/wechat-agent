@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "智能助手",
+    "icon": "el-icon-connection",
+    "href": "#",
+    "children": [
+      {
+        "id": 11,
+        "title": "微信助手维护",
+        "icon": "el-icon-magic-stick",
+        "href": "/agent"
+      }
+    ]
+  }
+]

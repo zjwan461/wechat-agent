@@ -2,7 +2,7 @@
   <div class="loginContent">
     <div class="loginArea">
       <div class="loginLogo">
-        <span>管理平台</span>
+        <span>微信智能助手</span>
       </div>
       <!-- 表单登录区域 -->
       <el-form ref="loginForm" label-width="0px" class="loginForm" :model="loginForm" :rules="rules">

@@ -4,3 +4,7 @@ def success(data=None):
 
 def error(msg="system is too busy"):
     return {"code": 1, "msg": msg, "data": None}
+
+
+def build(code, msg, data):
+    return {"code": code, "msg": msg, "data": data}

@@ -25,15 +25,11 @@ const routes = [{
   children: [{
     path: '/index',
     name: 'index',
-    component: () => import('../views/index.vue')
+    component: () => import('../views/watch.vue')
   }, {
     path: '/setting',
     name: 'setting',
     component: () => import('../views/setting.vue')
-  }, {
-    path: '/watch',
-    name: 'watch',
-    component: () => import('../views/watch.vue')
   }
   ]
 }]
