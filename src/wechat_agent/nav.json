@@ -7,10 +7,34 @@
     "children": [
       {
         "id": 11,
-        "title": "微信助手维护",
+        "title": "助手维护",
         "icon": "el-icon-magic-stick",
         "href": "/agent"
+      },
+      {
+        "id": 12,
+        "title": "人设管理",
+        "icon": "el-icon-magic-stick",
+        "href": "/system-role"
+      },
+      {
+        "id": 13,
+        "title": "AI模型管理",
+        "icon": "el-icon-magic-stick",
+        "href": "/system-role"
+      },
+      {
+        "id": 14,
+        "title": "预设回复",
+        "icon": "el-icon-magic-stick",
+        "href": "/system-role"
       }
     ]
+  },
+  {
+    "id": 2,
+    "title": "历史消息",
+    "icon": "el-icon-connection",
+    "href": "#"
   }
 ]
