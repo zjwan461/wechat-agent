@@ -1,14 +1,14 @@
 import json
 from pathlib import Path
 
-from flask import Flask, session, request, g, jsonify, current_app
+from flask import Flask, session, request, g, jsonify
 from src.wechat_agent.constants import SECRET_KEY, sys_info_id, token_header, token_prefix, token_white_list, gitee_url, \
-    github_url, server_host, server_port, setting_id
+    github_url, server_host, server_port
 from src.wechat_agent.domain.ajax_result import success, error, build
 from src.wechat_agent.service.jwt_util import verify_token, generate_token
 import re
 from src.wechat_agent.logger_config import get_logger
-from src.wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo, Setting
+from src.wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
 from src.wechat_agent.__about__ import __version__ as version
 from src.wechat_agent.service.md5_util import calculate_md5
 from src.wechat_agent.service.captcha_util import generate_base64_captcha
@@ -38,12 +38,12 @@ def auth():
     if not payload["valid"]:
         session.clear()
         return jsonify(error(payload["error"])), 401
-    with app.app_context():
-        login_token = current_app.config.get("token", {})
-        if payload["payload"]["user_id"] not in login_token or login_token[
-            payload["payload"]["user_id"]] != bearer_token:
-            return jsonify(error("token已过期")), 401
-    g.user_id = payload["payload"]["user_id"]
+    user_id = payload["payload"]["user_id"]
+    g.user_id = user_id
+    save_token = session.get(token_header)
+    if save_token is None or save_token != bearer_token:
+        session.clear()
+        return jsonify(error("invalid token")), 401
     return None
 
 
@@ -91,13 +91,8 @@ def login():
         SysInfo.password == calculate_md5(req["password"])).one_or_none()
     if sys_info is None:
         raise ApiError("用户名或密码错误")
-    session["sys_info"] = sys_info.to_dic()
-
     token = token_prefix + generate_token(sys_info.username)
-    with app.app_context():
-        login_token = current_app.config.get("token", {})
-        login_token[sys_info.username] = token
-        current_app.config["token"] = login_token
+    session[token_header] = token
     return jsonify(success(token))
 
 
@@ -126,11 +121,13 @@ def register():
         sys_info = session.query(SysInfo).get(sys_info_id)
         os_info = systemInfo_util.get_os_info()
         gpu_platform = "cuda" if systemInfo_util.is_cuda_available() else "cpu"
+        model_save_dir = str(Path(__file__).parent.parent.parent / "models")
         if sys_info is None:
             sys_info = SysInfo(id=sys_info_id, os_arch=os_info['arch'], platform=os_info['os'],
                                gpu_platform=gpu_platform,
                                version=version, username=req["username"],
-                               password=calculate_md5(req["password"]), email=req["email"])
+                               password=calculate_md5(req["password"]), email=req["email"],
+                               model_save_dir=model_save_dir)
             session.add(sys_info)
         else:
             sys_info.os_arch = os_info['arch']
@@ -140,17 +137,12 @@ def register():
             sys_info.username = req["username"]
             sys_info.password = calculate_md5(req["password"])
             sys_info.email = req["email"]
-
-        setting = session.query(Setting).get(setting_id)
-        if setting is None:
-            setting = Setting(id=setting_id, model_save_dir=str(Path(__file__).parent.parent.parent / "models"))
-            session.add(setting)
-        else:
-            setting.model_save_dir = str(Path(__file__).parent.parent.parent / "models")
+            sys_info.model_save_dir = model_save_dir
         session.commit()
     except Exception as e:
         logger.error(e)
         session.rollback()
+        raise e
     finally:
         session.close()
     return jsonify(success())
@@ -168,11 +160,6 @@ def nav():
 @app.route("/api/logout")
 def logout():
     session.clear()
-    username = g.user_id
-    with app.app_context():
-        login_token = current_app.config.get("token", {})
-        login_token.pop(username, None)
-        current_app.config["token"] = login_token
     return jsonify(success())
 
 
@@ -188,11 +175,11 @@ def get_sys_info():
 @app.route("/api/setting")
 def get_setting():
     session = SqliteSqlalchemy().session
-    setting = session.query(Setting).get(setting_id)
-    if setting is None:
+    sys_info = session.query(SysInfo).get(sys_info_id)
+    if sys_info is None:
         return jsonify(success())
     else:
-        result = setting.to_dic()
+        result = sys_info.to_dic()
         return jsonify(success(result))
 
 
@@ -201,15 +188,11 @@ def update_setting():
     req = request.json
     session = SqliteSqlalchemy().session
     try:
-        setting = session.query(Setting).get(setting_id)
-        if setting is None:
-            setting = Setting(id=setting_id, model_save_dir=req["model_save_dir"], proxy_host=req["proxy_host"],
-                              proxy_port=req["proxy_port"])
-            session.add(setting)
-        else:
-            setting.model_dir_dir = req["model_save_dir"]
-            setting.proxy_host = req["proxy_host"]
-            setting.proxy_port = req["proxy_port"]
+        sys_info = session.query(SysInfo).get(sys_info_id)
+        if sys_info is not None:
+            sys_info.model_dir_dir = req["model_save_dir"]
+            sys_info.proxy_host = req["proxy_host"]
+            sys_info.proxy_port = req["proxy_port"]
         session.commit()
         return jsonify(success())
     except Exception as e:

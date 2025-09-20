@@ -9,4 +9,3 @@ server_host = "0.0.0.0"
 db_url = "sqlite:///{0}/wechat-agent/db/wxa.db"
 sys_info_id = 1
 SECRET_KEY = "your-secret-key-keep-it-safe"
-setting_id = 1

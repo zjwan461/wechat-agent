@@ -36,11 +36,6 @@ class SysInfo(BaseEntity):
     username = Column(String(32), nullable=False)
     password = Column(String(32), nullable=False)
     email = Column(String(50), nullable=False)
-
-
-class Setting(BaseEntity):
-    __tablename__ = 'setting'
-    id = Column(Integer, primary_key=True)
     model_save_dir = Column(String(255), nullable=False)
     proxy_host = Column(String(255))
     proxy_port = Column(Integer)
