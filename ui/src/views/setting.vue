@@ -14,7 +14,7 @@
               <el-input v-model="setting.proxy_host" placeholder="代理地址"></el-input>
             </el-form-item>
             <el-form-item label="代理端口" prop="proxy_port">
-              <el-input-number :min="1000" :max="65535" :step="1" v-model="setting.proxy_port"
+              <el-input-number :max="65535" :step="1" v-model="setting.proxy_port"
                                placeholder="代理端口"></el-input-number>
             </el-form-item>
             <el-form-item>

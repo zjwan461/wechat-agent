@@ -15,19 +15,19 @@
         "id": 12,
         "title": "人设管理",
         "icon": "el-icon-user",
-        "href": "/system-role"
+        "href": "/ai-role"
       },
       {
         "id": 13,
         "title": "AI模型管理",
-        "icon": "el-icon-user",
-        "href": "/system-role"
+        "icon": "el-icon-cpu",
+        "href": "/model"
       },
       {
         "id": 14,
         "title": "预设回复",
         "icon": "el-icon-refresh",
-        "href": "/system-role"
+        "href": "/reply"
       }
     ]
   },

@@ -2,7 +2,7 @@
   <div>
     <el-breadcrumb separator="/">
       <el-breadcrumb-item>智慧助手</el-breadcrumb-item>
-      <el-breadcrumb-item>助手维护</el-breadcrumb-item>
+      <el-breadcrumb-item>人设管理</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
       <el-form :inline="true" v-model="search">
@@ -17,12 +17,21 @@
         <el-col :span="1.5">
           <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleEdit">修改
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete">删除
+          </el-button>
+        </el-col>
       </el-row>
-      <el-table :data="list" v-loading="loading">
+      <el-table :data="list" v-loading="loading" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="ID" prop="id"/>
         <el-table-column label="名称" prop="name"/>
         <el-table-column label="创建时间" prop="create_time" sortable/>
-        <el-table-column label="规则" prop="rule"/>
+        <el-table-column label="提示词" prop="prompt"/>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click="handleEdit(scope.row)">编辑</el-button>
@@ -31,21 +40,25 @@
         </el-table-column>
       </el-table>
       <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
       </el-pagination>
 
     </el-card>
 
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
-        <el-form-item label="助手名" prop="name">
-          <el-input v-model="form.name" placeholder="请输入助手名称" :maxlength="25" show-word-limit clearable/>
+        <el-form-item label="人设名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入人设名称" :maxlength="25" show-word-limit clearable/>
+        </el-form-item>
+        <el-form-item label="提示词" prop="prompt">
+          <el-input type="textarea" :rows="10" v-model="form.prompt" placeholder="请输入提示词" :maxlength="150"
+                    show-word-limit clearable/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -57,16 +70,24 @@
 </template>
 
 <script>
-import {listAgent} from "@/apis/agent/agent";
+import {listRole, getRole, deleteRole, createRole, updateRole} from "@/apis/aiRole/aiRole"
 
 export default {
   data() {
     return {
+      ids: [],
+      // 非单个禁用
+      single: true,
+      // 非多个禁用
+      multiple: true,
       open: false,
       title: '',
       rules: {
         name: [
-          {required: true, message: '助手名称必填', trigger: 'blur'}
+          {required: true, message: '人设名称必填', trigger: 'blur'}
+        ],
+        prompt: [
+          {required: true, message: '提示词必填', trigger: 'blur'}
         ]
       },
       form: {},
@@ -82,10 +103,29 @@ export default {
     this.getList()
   },
   methods: {
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map(item => item.id)
+      this.single = selection.length !== 1
+      this.multiple = !selection.length
+    },
     submitForm() {
       this.$refs['form'].validate(valid => {
         if (!valid) return
 
+        if (this.form.id != null) {
+          updateRole(this.form).then(res => {
+            this.$message.success('修改成功')
+            this.open = false
+            this.getList()
+          })
+        } else {
+          createRole(this.form).then(res => {
+            this.$message.success('新增成功')
+            this.open = false
+            this.getList()
+          })
+        }
       })
     },
     getList() {
@@ -95,7 +135,7 @@ export default {
         ...this.search
       }
       this.loading = true
-      listAgent(params).then(res => {
+      listRole(params).then(res => {
         this.loading = false
         this.list = res.rows
         this.total = res.total
@@ -110,14 +150,26 @@ export default {
       this.$refs['form'].resetFields()
     },
     handleAdd() {
-      this.title = '新增助手'
+      this.title = '新增系统人设'
       this.open = true
     },
     handleEdit(row) {
-
+      this.reset()
+      const id = row.id || this.ids
+      getRole(id).then(response => {
+        this.form = response.data
+        this.open = true
+        this.title = '修改系统人设'
+      })
     },
     handleDelete(row) {
-
+      const ids = row.id || this.ids.join(',')
+      this.$confirm('确认要删除系统人设编号为' + ids + '的数据项吗？', '提示').then(() => {
+        deleteRole(ids).then(res => {
+          this.getList()
+        })
+      }).catch(() => {
+      })
     },
     handleSizeChange(size) {
       this.pageSize = size
@@ -128,7 +180,7 @@ export default {
       this.getList()
     }
 
-  },
+  }
 }
 </script>
 

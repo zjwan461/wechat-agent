@@ -33,7 +33,11 @@ const routes = [{
   }, {
     path: '/agent',
     name: 'agent',
-    component: () => import('../views/agent/agent.vue')
+    component: () => import('../views/agent/index.vue')
+  }, {
+    path: '/ai-role',
+    name: 'aiRole',
+    component: () => import('../views/aiRole/index.vue')
   }
   ]
 }]

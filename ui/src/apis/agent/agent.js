@@ -7,3 +7,10 @@ export function listAgent(params) {
     params
   })
 }
+
+export function getAgent(id) {
+  return request({
+    url: '/api/agent/' + id,
+    method: 'get'
+  })
+}

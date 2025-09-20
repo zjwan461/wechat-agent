@@ -1,9 +1,0 @@
-[text friend]<wxauto - Chat object("开发七部招聘需求群")> - @谢玲敏 推错职位了
-[base system]<wxauto - Chat object("开发七部招聘需求群")> - 以下为新消息
-[text friend]<wxauto - Chat object("开发七部招聘需求群")> - @吴辉  吴老师 我变更到中级了
-[image friend]<wxauto - Chat object("开发七部招聘需求群")> - [图片]
-[quote friend]<wxauto - Chat object("开发七部招聘需求群")> - 好的
-[base time]<wxauto - Chat object("开发七部招聘需求群")> - 17:59
-[text friend]<wxauto - Chat object("开发七部招聘需求群")> - @龙光富 龙老师，六点有个面试哈，候选人已进入会议
-[text friend]<wxauto - Chat object("开发七部招聘需求群")> - @吴辉 吴老师，今天面试的麻烦有时间记得评价一下是否合适哈，谢谢啦
-[text friend]<wxauto - Chat object("开发七部招聘需求群")> - 好的

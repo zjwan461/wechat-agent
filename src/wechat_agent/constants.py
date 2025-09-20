@@ -1,7 +1,7 @@
 token_header = "Authorization"
 token_prefix = "Bearer "
-token_white_list = [r'^/page/.*', "/api/login", "/api/register", "/api/base/sys-info", "/api/base/git-repo",
-                    "/api/base/yzm"]
+token_white_list = [r'^/page/.*', "/api/auth/login", "/api/auth/register", "/api/base/sys-info", "/api/base/git-repo",
+                    "/api/auth/yzm", "/api/auth/refresh-token"]
 gitee_url = "https://gitee.com/zjwan461/wechat-agent"
 github_url = "https://github.com/zjwan461/wechat-agent"
 server_port = 8080

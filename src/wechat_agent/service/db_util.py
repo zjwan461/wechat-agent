@@ -18,10 +18,18 @@ class BaseEntity(Base):
                          onupdate=text("DATETIME(CURRENT_TIMESTAMP, '+8 hours')"))
 
     def to_dic(self):
-        return {
-            column.name: getattr(self, column.name)
-            for column in self.__table__.columns
-        }
+        res = {}
+        for column in self.__table__.columns:
+            if column.name == 'create_time' or column.name == 'update_time':
+                res[column.name] = getattr(self, column.name).strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                res[column.name] = getattr(self, column.name)
+        return res
+    # def to_dic(self):
+    #     return {
+    #         column.name: getattr(self, column.name)
+    #         for column in self.__table__.columns
+    #     }
 
 
 class SysInfo(BaseEntity):
@@ -46,6 +54,13 @@ class Agent(BaseEntity):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
     rule = Column(Text(), nullable=False)
+
+
+class AiRole(BaseEntity):
+    __tablename__ = 'ai_role'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), nullable=False)
+    prompt = Column(String(500), nullable=False)
 
 
 class SqliteSqlalchemy(object):

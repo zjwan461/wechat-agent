@@ -134,7 +134,7 @@ export default {
                   this.$message.error('非法的token')
                   return false
                 }
-                sessionStorage.setItem('Authorization', bearerToken.substring(7))
+                sessionStorage.setItem('Authorization', bearerToken)
                 this.$message({
                   message: '登录成功，页面即将跳转...',
                   type: 'info'

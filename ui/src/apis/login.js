@@ -2,7 +2,7 @@ import request from '../common/request'
 
 export function getYzm(t) {
   return request({
-    url: '/api/base/yzm?t=' + t,
+    url: '/api/auth/yzm?t=' + t,
     method: 'get'
   })
 }
@@ -16,13 +16,13 @@ export function getSysInfo() {
 
 export function login(data) {
   return request({
-    url: '/api/login',
+    url: '/api/auth/login',
     method: 'post',
     data: data
   })
 }
 
-export function gitRepo(){
+export function gitRepo() {
   return request({
     url: '/api/base/git-repo',
     method: 'get'
