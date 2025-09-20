@@ -4,11 +4,11 @@ from pathlib import Path
 from flask import Flask, session, request, g, jsonify
 from src.wechat_agent.constants import SECRET_KEY, sys_info_id, token_header, token_prefix, token_white_list, gitee_url, \
     github_url, server_host, server_port
-from src.wechat_agent.domain.ajax_result import success, error, build
+from src.wechat_agent.domain.ajax_result import success, error, build, pageResp
 from src.wechat_agent.service.jwt_util import verify_token, generate_token
 import re
 from src.wechat_agent.logger_config import get_logger
-from src.wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
+from src.wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo, Agent
 from src.wechat_agent.__about__ import __version__ as version
 from src.wechat_agent.service.md5_util import calculate_md5
 from src.wechat_agent.service.captcha_util import generate_base64_captcha
@@ -200,3 +200,21 @@ def update_setting():
         raise e
     finally:
         session.close()
+
+
+@app.route("/api/agent/list")
+def agent_list():
+    params = request.args
+    page = int(params.get("page"))
+    page_size = int(params.get("page_size"))
+    name = params.get("name")
+    offset = (page - 1) * page_size
+    session = SqliteSqlalchemy().session
+    query = session.query(Agent).filter(Agent.name.like(f"%{name}%"))
+    record = query.limit(page_size).offset(offset).all()
+    rows = []
+    for item in record:
+        rows.append(item.to_dic())
+    total = query.count()
+    session.close()
+    return jsonify(pageResp(rows, total))

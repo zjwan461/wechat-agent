@@ -30,6 +30,10 @@ const routes = [{
     path: '/setting',
     name: 'setting',
     component: () => import('../views/setting.vue')
+  }, {
+    path: '/agent',
+    name: 'agent',
+    component: () => import('../views/agent/agent.vue')
   }
   ]
 }]

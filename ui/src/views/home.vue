@@ -76,9 +76,8 @@ export default {
   data() {
     return {
       log: '',
-      messageBoardVisible: false,
-      collapse: true,
-      asideWidth: '64px',
+      collapse: false,
+      asideWidth: '200px',
       menuData: [],
       active: ''
     }

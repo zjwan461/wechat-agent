@@ -8,3 +8,7 @@ def error(msg="system is too busy"):
 
 def build(code, msg, data):
     return {"code": code, "msg": msg, "data": data}
+
+
+def pageResp(rows, total):
+    return {"code": 0, "rows": rows, "total": total}

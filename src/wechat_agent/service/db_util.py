@@ -1,6 +1,6 @@
 import os.path
 import src.wechat_agent.constants as constants
-from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, text, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, text, Text, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
 user_dir = os.path.join(os.path.expanduser('~'))
@@ -39,6 +39,13 @@ class SysInfo(BaseEntity):
     model_save_dir = Column(String(255), nullable=False)
     proxy_host = Column(String(255))
     proxy_port = Column(Integer)
+
+
+class Agent(BaseEntity):
+    __tablename__ = 'agent'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), nullable=False)
+    rule = Column(Text(), nullable=False)
 
 
 class SqliteSqlalchemy(object):
