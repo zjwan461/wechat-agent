@@ -52,7 +52,7 @@
     </el-card>
 
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="130px">
+      <el-form ref="replyForm" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="回复内容" prop="content">
           <el-input type="textarea" :rows="10" v-model="form.content" placeholder="请输入回复内容" :maxlength="150"
                     show-word-limit clearable/>
@@ -111,7 +111,7 @@ export default {
       this.multiple = !selection.length
     },
     submitForm() {
-      this.$refs['form'].validate(valid => {
+      this.$refs['replyForm'].validate(valid => {
         if (!valid) return
 
         if (this.form.id != null) {
@@ -148,9 +148,12 @@ export default {
     },
     reset() {
       this.form = {
+        content: '',
         group: 'default'
       }
-      this.$refs['form'].resetFields()
+      if (this.$refs['replyForm']) {
+        this.$refs['replyForm'].resetFields()
+      }
     },
     handleAdd() {
       this.title = '新增预设回复'

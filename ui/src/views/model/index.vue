@@ -194,7 +194,9 @@ export default {
         temperature: 0.7,
         max_tokens: 2048
       }
-      this.$refs['modelForm'].resetFields()
+      if (this.$refs['modelForm']) {
+        this.$refs['modelForm'].resetFields()
+      }
     },
     handleAdd() {
       this.title = '新增预设回复'

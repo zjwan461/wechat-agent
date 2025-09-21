@@ -27,7 +27,7 @@
         </el-col>
       </el-row>
       <el-table :data="list" v-loading="loading" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column type="selection" width="55" align="center"/>
         <el-table-column label="ID" prop="id"/>
         <el-table-column label="名称" prop="name"/>
         <el-table-column label="创建时间" prop="create_time" sortable/>
@@ -52,7 +52,7 @@
     </el-card>
 
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="130px">
+      <el-form ref="roleForm" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="人设名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入人设名称" :maxlength="25" show-word-limit clearable/>
         </el-form-item>
@@ -110,7 +110,7 @@ export default {
       this.multiple = !selection.length
     },
     submitForm() {
-      this.$refs['form'].validate(valid => {
+      this.$refs['roleForm'].validate(valid => {
         if (!valid) return
 
         if (this.form.id != null) {
@@ -147,7 +147,9 @@ export default {
     },
     reset() {
       this.form = {}
-      this.$refs['form'].resetFields()
+      if (this.$refs['roleForm']) {
+        this.$refs['roleForm'].resetFields()
+      }
     },
     handleAdd() {
       this.title = '新增系统人设'

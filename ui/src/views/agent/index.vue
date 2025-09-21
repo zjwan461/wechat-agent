@@ -52,7 +52,7 @@
     </el-card>
 
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="130px">
+      <el-form ref="agentForm" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="助手名" prop="name">
           <el-input v-model="form.name" placeholder="请输入助手名称" :maxlength="25" show-word-limit clearable/>
         </el-form-item>
@@ -103,7 +103,7 @@ export default {
       this.multiple = !selection.length
     },
     submitForm() {
-      this.$refs['form'].validate(valid => {
+      this.$refs['agentForm'].validate(valid => {
         if (!valid) return
 
       })
@@ -127,7 +127,9 @@ export default {
     },
     reset() {
       this.form = {}
-      this.$refs['form'].resetFields()
+      if (this.$refs['agentForm']) {
+        this.$refs['agentForm'].resetFields()
+      }
     },
     handleAdd() {
       this.title = '新增助手'
