@@ -10,6 +10,7 @@ from src.wechat_agent.controller.auth_controller import auth_bp
 from src.wechat_agent.controller.base_controller import base_bp
 from src.wechat_agent.controller.agent_controller import agent_bp
 from src.wechat_agent.controller.ai_role_controller import ai_role_bp
+from src.wechat_agent.controller.reply_controller import reply_bp
 
 app = Flask(__name__, static_url_path='/ui', static_folder='ui')
 app.secret_key = SECRET_KEY
@@ -17,6 +18,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(base_bp)
 app.register_blueprint(agent_bp)
 app.register_blueprint(ai_role_bp)
+app.register_blueprint(reply_bp)
 
 logger = get_logger()
 

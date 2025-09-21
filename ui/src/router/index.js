@@ -38,6 +38,10 @@ const routes = [{
     path: '/ai-role',
     name: 'aiRole',
     component: () => import('../views/aiRole/index.vue')
+  }, {
+    path: '/reply',
+    name: 'reply',
+    component: () => import('../views/reply/index.vue')
   }
   ]
 }]

@@ -63,6 +63,13 @@ class AiRole(BaseEntity):
     prompt = Column(String(500), nullable=False)
 
 
+class Reply(BaseEntity):
+    __tablename__ = 'reply'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    content = Column(Text(), nullable=False)
+    group = Column(String(50), nullable=False, default='default')
+
+
 class SqliteSqlalchemy(object):
     def __init__(self):
         # 创建Sqlite连接引擎
