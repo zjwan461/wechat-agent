@@ -1,7 +1,8 @@
 import os.path
 import src.wechat_agent.conf as constants
-from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, text, Text
+from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, text, Text, Double
 from sqlalchemy.orm import declarative_base, sessionmaker
+from src.wechat_agent.SysEnum import AiType
 
 user_dir = os.path.join(os.path.expanduser('~'))
 db_file_path = user_dir + "/wechat-agent/db"
@@ -68,6 +69,19 @@ class Reply(BaseEntity):
     id = Column(Integer, primary_key=True, autoincrement=True)
     content = Column(Text(), nullable=False)
     group = Column(String(50), nullable=False, default='default')
+
+
+class Model(BaseEntity):
+    __tablename__ = 'model'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(50), nullable=False)
+    type = Column(String(50), nullable=False, default=AiType.LLM.value)
+    provider = Column(String(50), nullable=False)
+    base_url = Column(String(150), nullable=False)
+    api_key = Column(String(100))
+    temperature = Column(Double(), nullable=False, default=0.7)
+    top_k = Column(Integer(), default=30)
+    top_p = Column(Double(), default=0.9)
 
 
 class SqliteSqlalchemy(object):

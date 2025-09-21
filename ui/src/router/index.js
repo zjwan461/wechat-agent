@@ -42,6 +42,10 @@ const routes = [{
     path: '/reply',
     name: 'reply',
     component: () => import('../views/reply/index.vue')
+  }, {
+    path: '/model',
+    name: 'model',
+    component: () => import('../views/model/index.vue')
   }
   ]
 }]

@@ -1,4 +1,4 @@
-import request from '@/common/request';
+import request from '@/common/request'
 
 export function listReply(params) {
   return request({
