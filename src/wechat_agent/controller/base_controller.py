@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from flask import Blueprint, session, request, jsonify
+from flask import Blueprint, request, jsonify
 from src.wechat_agent.domain.ajax_result import success
-from src.wechat_agent.constants import gitee_url, github_url, sys_info_id, server_host, server_port
+from src.wechat_agent.conf import gitee_url, github_url, sys_info_id, server_host, server_port
 from wechat_agent.service import systemInfo_util
 from wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
 

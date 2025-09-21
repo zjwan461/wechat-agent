@@ -1,7 +1,7 @@
 import os.path
-import src.wechat_agent.constants as constants
-from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, text, Text, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+import src.wechat_agent.conf as constants
+from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, text, Text
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 user_dir = os.path.join(os.path.expanduser('~'))
 db_file_path = user_dir + "/wechat-agent/db"

@@ -1,16 +1,13 @@
 import jwt
 import datetime
 from jwt import exceptions
-from src.wechat_agent.constants import SECRET_KEY
-
-# 密钥（实际应用中应妥善保管，不要硬编码）
-
+from src.wechat_agent.conf import SECRET_KEY, token_timeout
 
 
 def generate_token(user_id):
     """生成 JWT Token"""
     # 设置过期时间（例如：2小时后过期）
-    expiration = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+    expiration = datetime.datetime.utcnow() + datetime.timedelta(minutes=token_timeout)
 
     # 构建 payload
     payload = {

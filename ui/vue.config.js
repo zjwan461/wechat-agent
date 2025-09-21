@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: '/',
+  publicPath: '/ui',
   lintOnSave: false,
 
   devServer: {
@@ -20,5 +20,5 @@ module.exports = {
     }
   },
 
-  outputDir: 'dist'
+  outputDir: 'ui'
 }

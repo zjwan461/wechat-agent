@@ -5,7 +5,7 @@ from src.wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
 from src.wechat_agent.controller.service_error import ApiError
 from src.wechat_agent.service.md5_util import calculate_md5
 from src.wechat_agent.service.jwt_util import generate_token
-from src.wechat_agent.constants import token_header, token_prefix, sys_info_id
+from src.wechat_agent.conf import token_prefix, sys_info_id
 from src.wechat_agent.domain.ajax_result import success, error
 from src.wechat_agent.service.captcha_util import generate_base64_captcha
 import src.wechat_agent.service.systemInfo_util as systemInfo_util

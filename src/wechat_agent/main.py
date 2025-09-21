@@ -1,4 +1,4 @@
-from constants import token_header, token_prefix, token_white_list, SECRET_KEY, server_host, server_port
+from conf import token_header, token_prefix, token_white_list, SECRET_KEY, server_host, server_port
 from flask import Flask, request, jsonify, session, g
 from src.wechat_agent.logger_config import get_logger
 import re
@@ -11,7 +11,7 @@ from wechat_agent.controller.base_controller import base_bp
 from wechat_agent.controller.agent_controller import agent_bp
 from wechat_agent.controller.ai_role_controller import ai_role_bp
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="ui", static_url_path='/ui')
 app.secret_key = SECRET_KEY
 app.register_blueprint(auth_bp)
 app.register_blueprint(base_bp)
