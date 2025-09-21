@@ -71,8 +71,6 @@ def update_ai_role():
     try:
         model = session.query(Model).get(req["id"])
         if model is not None:
-            if not check_llm(model):
-                raise ApiError('模型检查失败')
             model.name = req["name"]
             model.provider = req.get("provider")
             model.base_url = req.get("base_url")
@@ -82,6 +80,8 @@ def update_ai_role():
             model.temperature = req.get("temperature")
             model.top_k = req.get("top_k")
             model.top_p = req.get("top_p")
+            if not check_llm(model):
+                raise ApiError('模型检查失败')
         session.commit()
     finally:
         session.close()
@@ -105,7 +105,8 @@ def delete_ai_role(ids):
 
 def check_llm(model: Model):
     try:
-        resp = chat_block_open_ai(model=model.name, base_url=model.base_url, api_key=model.api_key,
+        resp = chat_block_open_ai(model=model.name, base_url=model.base_url,
+                                  api_key=model.api_key if model.api_key is not None else 'test',
                                   system_message='你是一个AI助手', human_message='hello')
         logger.info(f'llm测试成功,resp={resp}')
         return True
