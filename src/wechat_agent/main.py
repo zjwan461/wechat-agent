@@ -3,15 +3,15 @@ from flask import Flask, request, jsonify, session, g
 from src.wechat_agent.logger_config import get_logger
 import re
 
-from wechat_agent.controller.service_error import ApiError
-from wechat_agent.domain.ajax_result import error
-from wechat_agent.service.jwt_util import verify_token
-from wechat_agent.controller.auth_controller import auth_bp
-from wechat_agent.controller.base_controller import base_bp
-from wechat_agent.controller.agent_controller import agent_bp
-from wechat_agent.controller.ai_role_controller import ai_role_bp
+from src.wechat_agent.controller.service_error import ApiError
+from src.wechat_agent.domain.ajax_result import error
+from src.wechat_agent.service.jwt_util import verify_token
+from src.wechat_agent.controller.auth_controller import auth_bp
+from src.wechat_agent.controller.base_controller import base_bp
+from src.wechat_agent.controller.agent_controller import agent_bp
+from src.wechat_agent.controller.ai_role_controller import ai_role_bp
 
-app = Flask(__name__, static_folder="ui", static_url_path='/ui')
+app = Flask(__name__, static_url_path='/ui', static_folder='ui')
 app.secret_key = SECRET_KEY
 app.register_blueprint(auth_bp)
 app.register_blueprint(base_bp)
@@ -67,12 +67,12 @@ def resp(response):
 
 
 @app.errorhandler(ApiError)
-def error_handle(e: ApiError):
+def error_handle(e):
     logger.error(e)
     return jsonify(error(e.message)), 200
 
 
-@app.errorhandler(500)
+@app.errorhandler(Exception)
 def unknow_error_handle(e: Exception):
     logger.error(e)
     return jsonify(error("system is too busy")), 500

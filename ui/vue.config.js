@@ -20,5 +20,5 @@ module.exports = {
     }
   },
 
-  outputDir: 'ui'
+  outputDir: 'dist'
 }
