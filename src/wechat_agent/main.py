@@ -1,17 +1,17 @@
 from conf import token_header, token_prefix, token_white_list, SECRET_KEY, server_host, server_port
 from flask import Flask, request, jsonify, session, g
-from src.wechat_agent.logger_config import get_logger
+from wechat_agent.logger_config import get_logger
 import re
 
-from src.wechat_agent.controller.service_error import ApiError
-from src.wechat_agent.domain.ajax_result import error
-from src.wechat_agent.service.jwt_util import verify_token
-from src.wechat_agent.controller.auth_controller import auth_bp
-from src.wechat_agent.controller.base_controller import base_bp
-from src.wechat_agent.controller.agent_controller import agent_bp
-from src.wechat_agent.controller.ai_role_controller import ai_role_bp
-from src.wechat_agent.controller.reply_controller import reply_bp
-from src.wechat_agent.controller.model_controller import model_bp
+from wechat_agent.controller.service_error import ApiError
+from wechat_agent.domain.ajax_result import error
+from wechat_agent.service.jwt_util import verify_token
+from wechat_agent.controller.auth_controller import auth_bp
+from wechat_agent.controller.base_controller import base_bp
+from wechat_agent.controller.agent_controller import agent_bp
+from wechat_agent.controller.ai_role_controller import ai_role_bp
+from wechat_agent.controller.reply_controller import reply_bp
+from wechat_agent.controller.model_controller import model_bp
 
 app = Flask(__name__, static_url_path='/ui', static_folder='ui')
 app.secret_key = SECRET_KEY

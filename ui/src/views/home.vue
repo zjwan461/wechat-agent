@@ -4,7 +4,7 @@
       <!-- 头部导航区域 -->
       <div>
         <img src="../assets/logo.png" width="30" alt>
-        <span>微信助手管理平台</span>
+        <span>微信智慧助手管理平台</span>
       </div>
       <el-dropdown @command="handleCommand">
         <div class="el-dropdown-link">

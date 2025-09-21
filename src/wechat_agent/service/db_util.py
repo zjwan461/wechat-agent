@@ -1,8 +1,8 @@
 import os.path
-import src.wechat_agent.conf as constants
+import wechat_agent.conf as constants
 from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, text, Text, Double
 from sqlalchemy.orm import declarative_base, sessionmaker
-from src.wechat_agent.SysEnum import AiType
+from wechat_agent.SysEnum import AiType
 
 user_dir = os.path.join(os.path.expanduser('~'))
 db_file_path = user_dir + "/wechat-agent/db"
@@ -80,6 +80,7 @@ class Model(BaseEntity):
     base_url = Column(String(150), nullable=False)
     api_key = Column(String(100))
     temperature = Column(Double(), nullable=False, default=0.7)
+    max_tokens = Column(Integer, nullable=False, default=2048)
     top_k = Column(Integer(), default=30)
     top_p = Column(Double(), default=0.9)
 

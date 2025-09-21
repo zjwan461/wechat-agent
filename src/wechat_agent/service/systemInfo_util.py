@@ -3,8 +3,8 @@ import platform
 
 import GPUtil
 import psutil
-from src.wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
-from src.wechat_agent.conf import sys_info_id
+from wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
+from wechat_agent.conf import sys_info_id
 
 
 def get_cpu_info():

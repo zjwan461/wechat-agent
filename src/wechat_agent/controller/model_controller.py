@@ -1,7 +1,12 @@
 from flask import request, Blueprint, jsonify
 
-from src.wechat_agent.service.db_util import SqliteSqlalchemy, Model
-from src.wechat_agent.domain.ajax_result import success, pageResp
+from wechat_agent.service.db_util import SqliteSqlalchemy, Model
+from wechat_agent.domain.ajax_result import success, pageResp
+from wechat_agent.service.langchain_util import chat_block_open_ai
+from wechat_agent.logger_config import get_logger
+from wechat_agent.controller.service_error import ApiError
+
+logger = get_logger(__name__)
 
 model_bp = Blueprint('model_bp', __name__)
 
@@ -48,8 +53,10 @@ def create_ai_role():
     session = SqliteSqlalchemy().session
     try:
         model = Model(name=req.get("name"), provider=req.get('provider'), base_url=req.get('base_url'),
-                      api_key=req.get("api_key"),
+                      api_key=req.get("api_key"), max_tokens=req.get('max_tokens'),
                       temperature=req.get("temperature"), top_k=req.get("top_k"), top_p=req.get("top_p"))
+        if not check_llm(model):
+            raise ApiError('模型检查失败')
         session.add(model)
         session.commit()
     finally:
@@ -64,9 +71,12 @@ def update_ai_role():
     try:
         model = session.query(Model).get(req["id"])
         if model is not None:
+            if not check_llm(model):
+                raise ApiError('模型检查失败')
             model.name = req["name"]
             model.provider = req.get("provider")
             model.base_url = req.get("base_url")
+            model.max_tokens = req.get("max_tokens")
             model.provider = req.get("provider")
             model.api_key = req.get("api_key")
             model.temperature = req.get("temperature")
@@ -91,3 +101,14 @@ def delete_ai_role(ids):
     finally:
         session.close()
     return jsonify(success())
+
+
+def check_llm(model: Model):
+    try:
+        resp = chat_block_open_ai(model=model.name, base_url=model.base_url, api_key=model.api_key,
+                                  system_message='你是一个AI助手', human_message='hello')
+        logger.info(f'llm测试成功,resp={resp}')
+        return True
+    except Exception as e:
+        logger.error(f"llm测试失败,error={e}")
+        return False

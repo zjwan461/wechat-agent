@@ -1,7 +1,7 @@
 import jwt
 import datetime
 from jwt import exceptions
-from src.wechat_agent.conf import SECRET_KEY, token_timeout
+from wechat_agent.conf import SECRET_KEY, token_timeout
 
 
 def generate_token(user_id):

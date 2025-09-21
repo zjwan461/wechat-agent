@@ -36,6 +36,7 @@
           </template>
         </el-table-column>
         <el-table-column label="base_url" prop="base_url"/>
+        <el-table-column label="max_tokens" prop="max_tokens"/>
         <el-table-column label="api_key" prop="api_key"/>
         <el-table-column label="temperature" prop="temperature"/>
         <el-table-column label="top_k" prop="top_k"/>
@@ -59,9 +60,8 @@
       </el-pagination>
 
     </el-card>
-
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="130px">
+      <el-form ref="modelForm" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="模型名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入模型名称" :maxlength="50"
                     show-word-limit clearable/>
@@ -77,6 +77,10 @@
         </el-form-item>
         <el-form-item label="api_key" prop="api_key">
           <el-input v-model="form.api_key" placeholder="请输入api_key" clearable/>
+        </el-form-item>
+        <el-form-item label="max_tokens" prop="max_tokens">
+          <el-input-number :step="100" v-model="form.max_tokens" placeholder="请输入max_tokens"
+                           clearable/>
         </el-form-item>
         <el-form-item label="temperature" prop="temperature">
           <el-input-number :min="0.01" :max="1.0" :step="0.1" v-model="form.temperature" placeholder="请输入temperature"
@@ -124,6 +128,9 @@ export default {
         ],
         temperature: [
           {required: true, message: 'temperature必填', trigger: 'blur'}
+        ],
+        max_tokens: [
+          {required: true, message: 'max_tokens必填', trigger: 'blur'}
         ]
       },
       form: {},
@@ -146,7 +153,7 @@ export default {
       this.multiple = !selection.length
     },
     submitForm() {
-      this.$refs['form'].validate(valid => {
+      this.$refs['modelForm'].validate(valid => {
         if (!valid) return
 
         if (this.form.id != null) {
@@ -184,9 +191,10 @@ export default {
     reset() {
       this.form = {
         provider: 'Open_AI',
-        temperature: 0.7
+        temperature: 0.7,
+        max_tokens: 2048
       }
-      this.$refs['form'].resetFields()
+      this.$refs['modelForm'].resetFields()
     },
     handleAdd() {
       this.title = '新增预设回复'

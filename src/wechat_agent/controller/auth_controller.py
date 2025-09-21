@@ -1,16 +1,16 @@
 from pathlib import Path
 
 from flask import Blueprint, session, request, jsonify
-from src.wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
-from src.wechat_agent.controller.service_error import ApiError
-from src.wechat_agent.service.md5_util import calculate_md5
-from src.wechat_agent.service.jwt_util import generate_token
-from src.wechat_agent.conf import token_prefix, sys_info_id
-from src.wechat_agent.domain.ajax_result import success, error
-from src.wechat_agent.service.captcha_util import generate_base64_captcha
-import src.wechat_agent.service.systemInfo_util as systemInfo_util
-from src.wechat_agent.__about__ import __version__ as version
-from src.wechat_agent.logger_config import get_logger
+from wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
+from wechat_agent.controller.service_error import ApiError
+from wechat_agent.service.md5_util import calculate_md5
+from wechat_agent.service.jwt_util import generate_token
+from wechat_agent.conf import token_prefix, sys_info_id
+from wechat_agent.domain.ajax_result import success, error
+from wechat_agent.service.captcha_util import generate_base64_captcha
+import wechat_agent.service.systemInfo_util as systemInfo_util
+from wechat_agent.__about__ import __version__ as version
+from wechat_agent.logger_config import get_logger
 
 logger = get_logger(__name__)
 

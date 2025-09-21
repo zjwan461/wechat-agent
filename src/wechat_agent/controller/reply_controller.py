@@ -1,7 +1,7 @@
 from flask import request, Blueprint, jsonify
 
-from src.wechat_agent.service.db_util import SqliteSqlalchemy, Reply
-from src.wechat_agent.domain.ajax_result import success, pageResp
+from wechat_agent.service.db_util import SqliteSqlalchemy, Reply
+from wechat_agent.domain.ajax_result import success, pageResp
 
 reply_bp = Blueprint('reply_bp', __name__)
 
