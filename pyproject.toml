@@ -11,31 +11,34 @@ requires-python = ">=3.11"
 license = "MIT"
 keywords = []
 authors = [
-  { name = "jerry", email = "826935261@qq.com" },
+    { name = "jerry", email = "826935261@qq.com" },
 ]
 classifiers = [
-  "Development Status :: 4 - Beta",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "wxauto~=39.1.16",
-  "langchain~=0.3.27",
-  "langchain-community~=0.3.27",
-  "langchain-text-splitters~=0.3.11",
-  "langchain-core~=0.3.76",
-  "langchain-experimental~=0.3.4",
-  "langchain-community~=0.3.21",
-  "openai~=1.108.0",
-  "flask~=3.1.2",
-  "pyjwt~=2.10.1",
-  "GPUtil~=1.4.0",
-  "wmi~=1.5.1"
-
+    "wxauto~=39.1.16",
+    "langchain~=0.3.27",
+    "langchain-community~=0.3.27",
+    "langchain-text-splitters~=0.3.11",
+    "langchain-core~=0.3.76",
+    "langchain-experimental~=0.3.4",
+    "langchain-community~=0.3.21",
+    "langchain-openai~=0.3.16",
+    "langchain-ollama~=0.3.8",
+    "openai~=1.108.0",
+    "flask~=3.1.2",
+    "pyjwt~=2.10.1",
+    "GPUtil~=1.4.0",
+    "wmi~=1.5.1"
 ]
+
+
 
 [project.urls]
 Documentation = "https://github.com/jerry/wechat-agent#readme"
@@ -47,7 +50,7 @@ path = "src/wechat_agent/__about__.py"
 
 [tool.hatch.envs.types]
 extra-dependencies = [
-  "mypy>=1.0.0",
+    "mypy>=1.0.0",
 ]
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/wechat_agent tests}"
@@ -57,7 +60,7 @@ source_pkgs = ["wechat_agent", "tests"]
 branch = true
 parallel = true
 omit = [
-  "src/wechat_agent/__about__.py",
+    "src/wechat_agent/__about__.py",
 ]
 
 [tool.coverage.paths]
@@ -66,7 +69,7 @@ tests = ["tests", "*/wechat-agent/tests"]
 
 [tool.coverage.report]
 exclude_lines = [
-  "no cov",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
+    "no cov",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
 ]
