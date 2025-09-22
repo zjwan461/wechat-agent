@@ -17,6 +17,7 @@ def get_memory(memory_key: str, memory_size: int = 5) -> ConversationBufferWindo
 
 
 def chat_block_ollama(
+        agent_id,
         model,
         system_message,
         human_message,
@@ -38,12 +39,13 @@ def chat_block_ollama(
         reasoning=False,
     )
 
-    memory = get_memory("ollama:" + model)
+    memory = get_memory(str(agent_id) + ":" + model)
     chain = ConversationChain(llm=chat_model, memory=memory)
     return chain.invoke(messages)['response']
 
 
 def chat_block_open_ai(
+        agent_id,
         model,
         base_url,
         api_key,
@@ -67,13 +69,13 @@ def chat_block_open_ai(
         top_p=top_p,
         timeout=timeout,
     )
-    memory = get_memory("ollama:" + model)
+    memory = get_memory(str(agent_id) + ":" + model)
     chain = ConversationChain(llm=chat_model, memory=memory)
     return chain.invoke(messages)['response']
 
 
 if __name__ == '__main__':
-    content = chat_block_ollama("qwen3:8b", "你是一个AI助手,保证语言干练，不要超过500个字", "langchain是什么")
+    content = chat_block_ollama(1,"qwen3:8b", "你叫花花，是一个AI助手。回答保证语言干练，不要超过500个字", "花花，我今天打了篮球")
     print(content)
-    content = chat_block_ollama("qwen3:8b", "你是一个AI助手，保证语言干练，不要超过500个字", "介绍一下文本生成")
+    content = chat_block_ollama(1,"qwen3:8b", "你叫花花，是一个AI助手。回答保证语言干练，不要超过500个字", "@花花")
     print(content)

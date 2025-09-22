@@ -30,8 +30,13 @@
         <el-table-column type="selection" width="55" align="center"/>
         <el-table-column label="ID" prop="id"/>
         <el-table-column label="名称" prop="name"/>
+        <el-table-column label="好友昵称" prop="nickname"/>
+        <el-table-column label="聊天类型" prop="chat_type"/>
+        <el-table-column label="助手类型" prop="type"/>
+        <el-table-column label="回复群组" prop="reply_group"/>
+        <el-table-column label="AI模型" prop="model"/>
+        <el-table-column label="人设" prop="ai_role"/>
         <el-table-column label="创建时间" prop="create_time" sortable/>
-        <el-table-column label="规则" prop="rule"/>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click="handleEdit(scope.row)">编辑</el-button>

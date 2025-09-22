@@ -2,7 +2,7 @@ import os.path
 import wechat_agent.conf as constants
 from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, text, Text, Double
 from sqlalchemy.orm import declarative_base, sessionmaker
-from wechat_agent.SysEnum import AiType
+from wechat_agent.SysEnum import AiType, AgentType, AgentStatus, ChatType
 
 user_dir = os.path.join(os.path.expanduser('~'))
 db_file_path = user_dir + "/wechat-agent/db"
@@ -54,7 +54,13 @@ class Agent(BaseEntity):
     __tablename__ = 'agent'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
-    rule = Column(Text(), nullable=False)
+    nickname = Column(String(255), nullable=False)
+    chat_type = Column(String(50), nullable=False, default=ChatType.PRIVATE.value)
+    type = Column(String(50), nullable=False, default=AgentType.SIMPLE.value)
+    reply_group = Column(String(50))
+    model_id = Column(Integer)
+    ai_role_id = Column(Integer)
+    status = Column(String(50), nullable=False, default=AgentStatus.STOPPED.value)
 
 
 class AiRole(BaseEntity):
