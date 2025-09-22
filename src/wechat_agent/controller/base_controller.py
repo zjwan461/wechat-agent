@@ -62,6 +62,7 @@ def update_setting():
         sys_info = session.query(SysInfo).get(sys_info_id)
         if sys_info is not None:
             sys_info.model_dir_dir = req["model_save_dir"]
+            sys_info.wechat_install_path = req["wechat_install_path"]
             sys_info.proxy_host = req["proxy_host"]
             sys_info.proxy_port = req["proxy_port"]
         session.commit()

@@ -11,6 +11,8 @@ from wechat_agent.service.captcha_util import generate_base64_captcha
 import wechat_agent.service.systemInfo_util as systemInfo_util
 from wechat_agent.__about__ import __version__ as version
 from wechat_agent.logger_config import get_logger
+from wechat_agent.service.wx_util import get_wechat_version
+from wechat_agent.SysEnum import WechatVersion
 
 logger = get_logger(__name__)
 
@@ -48,12 +50,25 @@ def register():
         os_info = systemInfo_util.get_os_info()
         gpu_platform = "cuda" if systemInfo_util.is_cuda_available() else "cpu"
         model_save_dir = str(Path(__file__).parent.parent.parent / "models")
+        wechat_install_path = req.get("wechat_install_path")
+        wechat_version = get_wechat_version(wechat_install_path)
+        if wechat_version is not None:
+            if wechat_version.startswith("3"):
+                wechat_version = WechatVersion.V3.value
+            elif wechat_version.startswith("4"):
+                wechat_version = WechatVersion.V4.value
+            else:
+                raise ApiError("不支持的微信版本")
+        else:
+            raise ApiError("你必须提供微信的安装目录才能继续操作")
+
         if sys_info is None:
             sys_info = SysInfo(id=sys_info_id, os_arch=os_info['arch'], platform=os_info['os'],
                                gpu_platform=gpu_platform,
                                version=version, username=req["username"],
                                password=calculate_md5(req["password"]), email=req["email"],
-                               model_save_dir=model_save_dir)
+                               model_save_dir=model_save_dir, wechat_install_path=wechat_install_path,
+                               wechat_version=wechat_version)
             session.add(sys_info)
         else:
             sys_info.os_arch = os_info['arch']
@@ -64,6 +79,8 @@ def register():
             sys_info.password = calculate_md5(req["password"])
             sys_info.email = req["email"]
             sys_info.model_save_dir = model_save_dir
+            sys_info.wechat_install_path = wechat_install_path
+            sys_info.wechat_version = wechat_version
         session.commit()
     except Exception as e:
         logger.error(e)

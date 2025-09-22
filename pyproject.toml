@@ -23,6 +23,7 @@ classifiers = [
 ]
 dependencies = [
     "wxauto~=39.1.16",
+    "wxauto4~=40.1.1",
     "langchain~=0.3.27",
     "langchain-community~=0.3.27",
     "langchain-text-splitters~=0.3.11",

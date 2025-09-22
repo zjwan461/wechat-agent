@@ -6,7 +6,7 @@
         <el-form
           ref="registerForm"
           :model="registerForm"
-          label-width="80px"
+          label-width="120px"
           class="registerForm"
           :rules="rules"
         >
@@ -15,7 +15,7 @@
             prop="username"
           >
             <el-input
-              v-model="registerForm.username"
+              v-model="registerForm.username"  placeholder="请输入用户名"
               type="text"
             />
           </el-form-item>
@@ -24,7 +24,7 @@
             prop="password"
           >
             <el-input
-              v-model="registerForm.password"
+              v-model="registerForm.password" placeholder="请输入密码"
               type="password"
             />
           </el-form-item>
@@ -33,7 +33,7 @@
             prop="rePwd"
           >
             <el-input
-              v-model="registerForm.rePwd"
+              v-model="registerForm.rePwd" placeholder="请输入密码"
               type="password"
             />
           </el-form-item>
@@ -42,8 +42,16 @@
             prop="email"
           >
             <el-input
-              v-model="registerForm.email"
+              v-model="registerForm.email" placeholder="请输入邮箱"
               type="email"
+            />
+          </el-form-item>
+          <el-form-item
+            label="微信安装目录"
+            prop="wechat_install_path"
+          >
+            <el-input
+              v-model="registerForm.wechat_install_path" placeholder="微信的安装目录（Wexin.exe的绝对路径，如：F:\software\Weixin\Weixin.exe）"
             />
           </el-form-item>
           <el-form-item>
@@ -89,7 +97,9 @@ export default {
         email: [
           {pattern: /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/, trigger: 'blur', required: true}
         ],
-
+        wechat_install_path: [
+          {required: true, message: '请输入微信安装目录', trigger: 'blur'}
+        ]
       }
     }
   },
@@ -117,7 +127,7 @@ export default {
 }
 
 .registerArea {
-  width: 600px;
+  width: 800px;
   height: 600px;
   position: absolute;
   left: 50%;

@@ -2,7 +2,7 @@ import os.path
 import wechat_agent.conf as constants
 from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, text, Text, Double
 from sqlalchemy.orm import declarative_base, sessionmaker
-from wechat_agent.SysEnum import AiType, AgentType, AgentStatus, ChatType
+from wechat_agent.SysEnum import AiType, AgentType, AgentStatus, ChatType, WechatVersion
 
 user_dir = os.path.join(os.path.expanduser('~'))
 db_file_path = user_dir + "/wechat-agent/db"
@@ -48,6 +48,8 @@ class SysInfo(BaseEntity):
     model_save_dir = Column(String(255), nullable=False)
     proxy_host = Column(String(255))
     proxy_port = Column(Integer)
+    wechat_install_path = Column(String(255), nullable=False)
+    wechat_version = Column(String(50), nullable=False, default=WechatVersion.V3.value)
 
 
 class Agent(BaseEntity):

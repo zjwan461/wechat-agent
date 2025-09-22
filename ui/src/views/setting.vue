@@ -10,6 +10,9 @@
             <el-form-item label="模型保存目录" prop="model_save_dir">
               <el-input v-model="setting.model_save_dir" placeholder="模型保存目录"></el-input>
             </el-form-item>
+            <el-form-item label="微信安装目录" prop="wechat_install_path">
+              <el-input v-model="setting.wechat_install_path" placeholder="微信安装绝对路径"></el-input>
+            </el-form-item>
             <el-form-item label="代理地址" prop="proxy_host">
               <el-input v-model="setting.proxy_host" placeholder="代理地址"></el-input>
             </el-form-item>
@@ -38,7 +41,10 @@ export default {
       rules: {
         model_save_dir: [
           {required: true, message: '模型保存目录必填', trigger: 'blur'}
-        ]
+        ],
+        wechat_install_path: [
+          {required: true, message: '请输入微信安装目录', trigger: 'blur'}
+        ],
       },
       setting: {}
     }

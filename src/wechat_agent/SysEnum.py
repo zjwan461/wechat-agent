@@ -15,10 +15,17 @@ class AgentType(Enum):
     SIMPLE = "SIMPLE"
     AI = "AI"
 
+
 class AgentStatus(Enum):
     STARTED = "运行中"
     STOPPED = "已停止"
 
+
 class ChatType(Enum):
     PRIVATE = '私聊'
     GROUP = '群聊'
+
+
+class WechatVersion(Enum):
+    V3 = "V3"
+    V4 = "V4"
