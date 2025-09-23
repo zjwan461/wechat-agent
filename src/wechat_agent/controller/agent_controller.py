@@ -26,10 +26,13 @@ def agent_list():
         page = int(params.get("page"))
         page_size = int(params.get("page_size"))
         name = params.get("name")
+        nickname = params.get("nickname")
         offset = (page - 1) * page_size
         query = session.query(Agent)
         if name:
             query = query.filter(Agent.name.like(f"%{name}%"))
+        if nickname:
+            query = query.filter(Agent.nickname.like(f"%{nickname}%"))
         record = query.limit(page_size).offset(offset).all()
 
         model_mapping = get_id_mapping(Model)

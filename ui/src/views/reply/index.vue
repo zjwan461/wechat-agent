@@ -7,7 +7,7 @@
     <el-card>
       <el-form :inline="true" v-model="search">
         <el-form-item label="回复内容">
-          <el-input v-model="search.content" placeholder="请输入回复内容"/>
+          <el-input v-model="search.content" placeholder="请输入回复内容" clearable/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getList">查询</el-button>

@@ -48,7 +48,8 @@ def get_logger(name=__name__, log_level=logging.INFO):
         when='midnight',
         interval=1,
         backupCount=30,
-        encoding='utf-8'
+        encoding='utf-8',
+        delay=True
     )
     file_handler.setLevel(logging.DEBUG)  # 文件输出所有级别日志
     file_handler.setFormatter(formatter)

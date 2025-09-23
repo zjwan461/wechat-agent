@@ -7,7 +7,10 @@
     <el-card>
       <el-form :inline="true" v-model="search">
         <el-form-item label="名称">
-          <el-input v-model="search.name" placeholder="请输入名称"/>
+          <el-input v-model="search.name" placeholder="请输入名称" clearable/>
+        </el-form-item>
+        <el-form-item label="好友名称">
+          <el-input v-model="search.nickname" placeholder="请输入好友名称" clearable/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getList">查询</el-button>
@@ -44,6 +47,11 @@
         <el-table-column label="回复群组" prop="reply_group"/>
         <el-table-column label="AI模型" prop="model"/>
         <el-table-column label="人设" prop="ai_role"/>
+        <el-table-column label="状态" prop="status" width="100">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.status === '已停止' ? 'danger' : 'success'">{{ scope.row.status }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="创建时间" prop="create_time" sortable/>
         <el-table-column label="操作">
           <template slot-scope="scope">
