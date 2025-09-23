@@ -2,10 +2,14 @@ import json
 from pathlib import Path
 
 from flask import Blueprint, request, jsonify
+
+from wechat_agent.controller.service_error import ApiError
 from wechat_agent.domain.ajax_result import success
 from wechat_agent.conf import gitee_url, github_url, sys_info_id, server_host, server_port
 from wechat_agent.service import systemInfo_util
 from wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
+from wechat_agent.service.wx_util import get_wechat_version
+from wechat_agent.SysEnum import WechatVersion
 
 base_bp = Blueprint('base_bp', __name__)
 
@@ -57,12 +61,23 @@ def get_setting():
 @base_bp.route("/api/setting", methods=["POST"])
 def update_setting():
     req = request.json
+    wechat_install_path = req["wechat_install_path"]
+    version = get_wechat_version(wechat_install_path)
+    if version is None:
+        raise ApiError("无法获取微信版本")
+    if version.startswith("3"):
+        version = WechatVersion.V3.value
+    elif version.startswith("4"):
+        version = WechatVersion.V4.value
+    else:
+        raise ApiError("不支持的微信版本")
     session = SqliteSqlalchemy().session
     try:
         sys_info = session.query(SysInfo).get(sys_info_id)
         if sys_info is not None:
             sys_info.model_dir_dir = req["model_save_dir"]
-            sys_info.wechat_install_path = req["wechat_install_path"]
+            sys_info.wechat_install_path = wechat_install_path
+            sys_info.wechat_version = version
             sys_info.proxy_host = req["proxy_host"]
             sys_info.proxy_port = req["proxy_port"]
         session.commit()

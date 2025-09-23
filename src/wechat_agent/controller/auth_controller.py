@@ -60,7 +60,7 @@ def register():
             else:
                 raise ApiError("不支持的微信版本")
         else:
-            raise ApiError("你必须提供微信的安装目录才能继续操作")
+            raise ApiError("无法获取微信版本")
 
         if sys_info is None:
             sys_info = SysInfo(id=sys_info_id, os_arch=os_info['arch'], platform=os_info['os'],

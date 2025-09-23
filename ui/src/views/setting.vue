@@ -13,6 +13,9 @@
             <el-form-item label="微信安装目录" prop="wechat_install_path">
               <el-input v-model="setting.wechat_install_path" placeholder="微信安装绝对路径"></el-input>
             </el-form-item>
+            <el-form-item label="微信版本" prop="wechat_version">
+              <el-input v-model="setting.wechat_version" readonly disabled></el-input>
+            </el-form-item>
             <el-form-item label="代理地址" prop="proxy_host">
               <el-input v-model="setting.proxy_host" placeholder="代理地址"></el-input>
             </el-form-item>
