@@ -14,3 +14,26 @@ export function getAgent(id) {
     method: 'get'
   })
 }
+
+export function createAgent(data) {
+  return request({
+    url: '/api/agent/create',
+    method: 'post',
+    data: data
+  })
+}
+
+export function updateAgent(data) {
+  return request({
+    url: '/api/agent/update',
+    method: 'put',
+    data: data
+  })
+}
+
+export function deleteAgent(ids) {
+  return request({
+    url: '/api/agent/delete/' + ids,
+    method: 'delete'
+  })
+}

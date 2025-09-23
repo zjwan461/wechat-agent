@@ -15,7 +15,7 @@
             prop="username"
           >
             <el-input
-              v-model="registerForm.username"  placeholder="请输入用户名"
+              v-model="registerForm.username" placeholder="请输入用户名"
               type="text"
             />
           </el-form-item>
@@ -51,8 +51,20 @@
             prop="wechat_install_path"
           >
             <el-input
-              v-model="registerForm.wechat_install_path" placeholder="微信的安装目录（Wexin.exe的绝对路径，如：F:\software\Weixin\Weixin.exe）"
+              v-model="registerForm.wechat_install_path"
+              placeholder="微信的安装目录（Wexin.exe的绝对路径，如：F:\software\Weixin\Weixin.exe）"
             />
+          </el-form-item>
+          <el-form-item
+            label="微信版本"
+            prop="wechat_version"
+          >
+            <el-select
+              v-model="registerForm.wechat_version"
+            >
+              <el-option label="V3" value=V3>V3</el-option>
+              <el-option label="V4" value=V4>V4</el-option>
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button
@@ -111,6 +123,8 @@ export default {
           if (response.code === 0) {
             this.$message.success('注册成功,即将返回登录页')
             this.$router.push('/login')
+          } else {
+
           }
         })
       })

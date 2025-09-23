@@ -51,16 +51,18 @@ def register():
         gpu_platform = "cuda" if systemInfo_util.is_cuda_available() else "cpu"
         model_save_dir = str(Path(__file__).parent.parent.parent / "models")
         wechat_install_path = req.get("wechat_install_path")
-        wechat_version = get_wechat_version(wechat_install_path)
-        if wechat_version is not None:
-            if wechat_version.startswith("3"):
-                wechat_version = WechatVersion.V3.value
-            elif wechat_version.startswith("4"):
-                wechat_version = WechatVersion.V4.value
+        wechat_version = req.get('wechat_version')
+        if wechat_version is None:
+            wechat_version = get_wechat_version(wechat_install_path)
+            if wechat_version is not None:
+                if wechat_version.startswith("3"):
+                    wechat_version = WechatVersion.V3.value
+                elif wechat_version.startswith("4"):
+                    wechat_version = WechatVersion.V4.value
+                else:
+                    raise ApiError("不支持的微信版本")
             else:
-                raise ApiError("不支持的微信版本")
-        else:
-            raise ApiError("无法获取微信版本")
+                raise ApiError("无法获取微信版本,请手动选择")
 
         if sys_info is None:
             sys_info = SysInfo(id=sys_info_id, os_arch=os_info['arch'], platform=os_info['os'],

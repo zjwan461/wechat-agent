@@ -122,6 +122,7 @@ export default {
           updateReply(this.form).then(res => {
             if (res.code === 0) {
               this.$message.success('修改成功')
+              this.open = false
               this.reset()
               this.getList()
             }
@@ -130,6 +131,7 @@ export default {
           createReply(this.form).then(res => {
             if (res.code === 0) {
               this.$message.success('新增成功')
+              this.open = false
               this.reset()
               this.getList()
             }

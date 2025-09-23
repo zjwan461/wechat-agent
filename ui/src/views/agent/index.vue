@@ -31,8 +31,16 @@
         <el-table-column label="ID" prop="id"/>
         <el-table-column label="名称" prop="name"/>
         <el-table-column label="好友昵称" prop="nickname"/>
-        <el-table-column label="聊天类型" prop="chat_type"/>
-        <el-table-column label="助手类型" prop="type"/>
+        <el-table-column label="聊天类型" prop="chat_type">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.chat_type === 'PRIVATE' ? 'success' : 'primary'">{{ scope.row.chat_type }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="助手类型" prop="type">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.type === 'SIMPLE' ? 'success' : 'primary'">{{ scope.row.type }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="回复群组" prop="reply_group"/>
         <el-table-column label="AI模型" prop="model"/>
         <el-table-column label="人设" prop="ai_role"/>
@@ -81,12 +89,12 @@
             <el-option v-for="(item,index) in reply_groups" :key="index" :value="item" :label="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="AI模型" prop="model_id" v-if="form.show === 'AI'">
+        <el-form-item label="AI模型" prop="model_id" v-show="form.type === 'AI'">
           <el-select v-model="form.model_id">
             <el-option v-for="item in model_list" :key="item.id" :value="item.id" :label="item.name"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="人设" prop="ai_role_id" v-if="form.show === 'AI'">
+        <el-form-item label="人设" prop="ai_role_id" v-show="form.type === 'AI'">
           <el-select v-model="form.ai_role_id">
             <el-option v-for="item in ai_role_list" :key="item.id" :value="item.id" :label="item.name"/>
           </el-select>
@@ -101,7 +109,7 @@
 </template>
 
 <script>
-import {listAgent, getAgent} from '@/apis/agent/agent'
+import {listAgent, getAgent, createAgent, updateAgent, deleteAgent} from '@/apis/agent/agent'
 import {listModel} from '@/apis/model/model'
 import {listRole} from '@/apis/aiRole/aiRole'
 import {getReplyGroups} from '@/apis/reply/reply'
@@ -170,7 +178,26 @@ export default {
     submitForm() {
       this.$refs['agentForm'].validate(valid => {
         if (!valid) return
-
+        if (this.form.reply_group) {
+          this.form.reply_group = this.form.reply_group.join(',')
+        }
+        if (this.form.id != null) {
+          updateAgent(this.form).then(res => {
+            if (res.code === 0) {
+              this.$message.success('修改成功')
+              this.open = false
+              this.getList()
+            }
+          })
+        } else {
+          createAgent(this.form).then(res => {
+            if (res.code === 0) {
+              this.$message.success('新增成功')
+              this.open = false
+              this.getList()
+            }
+          })
+        }
       })
     },
     getList() {
@@ -222,6 +249,9 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids
       this.$confirm('确认要删除助手编号为' + ids + '的数据项吗？', '提示').then(() => {
+        deleteAgent(ids).then(res => {
+          this.getList()
+        })
       }).catch(() => {
       })
     },

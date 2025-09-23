@@ -62,15 +62,18 @@ def get_setting():
 def update_setting():
     req = request.json
     wechat_install_path = req["wechat_install_path"]
-    version = get_wechat_version(wechat_install_path)
-    if version is None:
-        raise ApiError("无法获取微信版本")
-    if version.startswith("3"):
-        version = WechatVersion.V3.value
-    elif version.startswith("4"):
-        version = WechatVersion.V4.value
-    else:
-        raise ApiError("不支持的微信版本")
+    version = req.get('wechat_version')
+    if version is None or len(version) == 0:
+        version = get_wechat_version(wechat_install_path)
+        if version is None:
+            raise ApiError("无法获取微信版本,请手动指定")
+        if version.startswith("3"):
+            version = WechatVersion.V3.value
+        elif version.startswith("4"):
+            version = WechatVersion.V4.value
+        else:
+            raise ApiError("不支持的微信版本")
+
     session = SqliteSqlalchemy().session
     try:
         sys_info = session.query(SysInfo).get(sys_info_id)
