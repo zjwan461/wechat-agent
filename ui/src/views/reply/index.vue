@@ -26,11 +26,15 @@
           </el-button>
         </el-col>
       </el-row>
-      <el-table :data="list" v-loading="loading" @selection-change="handleSelectionChange">
+      <el-table :data="list" v-loading="loading" @selection-change="handleSelectionChange" stripe>
         <el-table-column type="selection" width="55" align="center"/>
         <el-table-column label="ID" prop="id"/>
         <el-table-column label="回复内容" prop="content"/>
-        <el-table-column label="分组" prop="group"/>
+        <el-table-column label="分组" prop="group">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.group === 'default' ? 'info' : 'primary'">{{ scope.row.group }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="创建时间" prop="create_time" sortable/>
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -161,6 +165,7 @@ export default {
     },
     handleAdd() {
       this.title = '新增预设回复'
+      this.reset()
       this.open = true
     },
     handleEdit(row) {

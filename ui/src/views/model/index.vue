@@ -208,6 +208,7 @@ export default {
     },
     handleAdd() {
       this.title = '新增预设回复'
+      this.reset()
       this.open = true
     },
     handleEdit(row) {
