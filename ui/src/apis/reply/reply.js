@@ -37,3 +37,10 @@ export function deleteReply(ids) {
     method: 'delete'
   })
 }
+
+export function getReplyGroups() {
+  return request({
+    url: '/api/reply/listGroup',
+    method: 'get'
+  })
+}

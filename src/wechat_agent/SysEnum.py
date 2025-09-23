@@ -12,8 +12,8 @@ class AiType(Enum):
 
 
 class AgentType(Enum):
-    SIMPLE = "SIMPLE"
-    AI = "AI"
+    SIMPLE = "指定回复"
+    AI = "AI回复"
 
 
 class AgentStatus(Enum):

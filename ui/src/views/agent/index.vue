@@ -61,6 +61,36 @@
         <el-form-item label="助手名" prop="name">
           <el-input v-model="form.name" placeholder="请输入助手名称" :maxlength="25" show-word-limit clearable/>
         </el-form-item>
+        <el-form-item label="好友昵称" prop="nickname">
+          <el-input v-model="form.nickname" placeholder="请输入好友昵称" :maxlength="50" show-word-limit clearable/>
+        </el-form-item>
+        <el-form-item label="聊天类型" prop="chat_type">
+          <el-radio-group v-model="form.chat_type">
+            <el-radio label="PRIVATE">私聊</el-radio>
+            <el-radio label="GROUP">群聊</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="助手类型" prop="type">
+          <el-radio-group v-model="form.type">
+            <el-radio label="SIMPLE">指定回复</el-radio>
+            <el-radio label="AI">AI回复</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="回复群组" prop="reply_group" v-show="form.type ==='SIMPLE'">
+          <el-select v-model="form.reply_group" multiple :multiple-limit="3">
+            <el-option v-for="(item,index) in reply_groups" :key="index" :value="item" :label="item"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="AI模型" prop="model_id" v-if="form.show === 'AI'">
+          <el-select v-model="form.model_id">
+            <el-option v-for="item in model_list" :key="item.id" :value="item.id" :label="item.name"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="人设" prop="ai_role_id" v-if="form.show === 'AI'">
+          <el-select v-model="form.ai_role_id">
+            <el-option v-for="item in ai_role_list" :key="item.id" :value="item.id" :label="item.name"/>
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -71,11 +101,17 @@
 </template>
 
 <script>
-import {listAgent, getAgent} from "@/apis/agent/agent";
+import {listAgent, getAgent} from '@/apis/agent/agent'
+import {listModel} from '@/apis/model/model'
+import {listRole} from '@/apis/aiRole/aiRole'
+import {getReplyGroups} from '@/apis/reply/reply'
 
 export default {
   data() {
     return {
+      model_list: [],
+      ai_role_list: [],
+      reply_groups: [],
       ids: [],
       // 非单个禁用
       single: true,
@@ -86,7 +122,10 @@ export default {
       rules: {
         name: [
           {required: true, message: '助手名称必填', trigger: 'blur'}
-        ]
+        ],
+        nickname: [
+          {required: true, message: '好友昵称必填', trigger: 'blur'}
+        ],
       },
       form: {},
       loading: false,
@@ -101,6 +140,27 @@ export default {
     this.getList()
   },
   methods: {
+    getReplyGroups() {
+      getReplyGroups().then(res => {
+        if (res.code === 0) {
+          this.reply_groups = res.data
+        }
+      })
+    },
+    getModels() {
+      listModel({page: 1, page_size: 10000}).then(res => {
+        if (res.code === 0) {
+          this.model_list = res.rows
+        }
+      })
+    },
+    getAiRoles() {
+      listRole({page: 1, page_size: 10000}).then(res => {
+        if (res.code === 0) {
+          this.ai_role_list = res.rows
+        }
+      })
+    },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
@@ -131,7 +191,10 @@ export default {
       this.open = false
     },
     reset() {
-      this.form = {}
+      this.form = {
+        chat_type: 'PRIVATE',
+        type: 'AI'
+      }
       if (this.$refs['agentForm']) {
         this.$refs['agentForm'].resetFields()
       }
@@ -139,6 +202,10 @@ export default {
     handleAdd() {
       this.title = '新增助手'
       this.open = true
+      this.reset()
+      this.getModels()
+      this.getAiRoles()
+      this.getReplyGroups()
     },
     handleEdit(row) {
       this.reset()
@@ -148,6 +215,9 @@ export default {
         this.open = true
         this.title = '修改AI智能体'
       })
+      this.getModels()
+      this.getAiRoles()
+      this.getReplyGroups()
     },
     handleDelete(row) {
       const ids = row.id || this.ids

@@ -2,6 +2,7 @@
   <div>
     <el-breadcrumb separator="/">
       <el-breadcrumb-item>设置</el-breadcrumb-item>
+      <el-breadcrumb-item>系统设置</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
       <el-row>

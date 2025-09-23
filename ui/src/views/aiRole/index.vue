@@ -30,8 +30,12 @@
         <el-table-column type="selection" width="55" align="center"/>
         <el-table-column label="ID" prop="id"/>
         <el-table-column label="名称" prop="name"/>
+        <el-table-column label="提示词" prop="prompt">
+          <template slot-scope="scope">
+            <div v-text="scope.row.prompt.substring(0,50) + '...'"></div>
+          </template>
+        </el-table-column>
         <el-table-column label="创建时间" prop="create_time" sortable/>
-        <el-table-column label="提示词" prop="prompt"/>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click="handleEdit(scope.row)">编辑</el-button>
@@ -57,7 +61,7 @@
           <el-input v-model="form.name" placeholder="请输入人设名称" :maxlength="25" show-word-limit clearable/>
         </el-form-item>
         <el-form-item label="提示词" prop="prompt">
-          <el-input type="textarea" :rows="10" v-model="form.prompt" placeholder="请输入提示词" :maxlength="150"
+          <el-input type="textarea" :rows="10" v-model="form.prompt" placeholder="请输入提示词" :maxlength="1000"
                     show-word-limit clearable/>
         </el-form-item>
       </el-form>

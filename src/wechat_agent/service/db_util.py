@@ -69,7 +69,7 @@ class AiRole(BaseEntity):
     __tablename__ = 'ai_role'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
-    prompt = Column(String(500), nullable=False)
+    prompt = Column(Text(), nullable=False)
 
 
 class Reply(BaseEntity):

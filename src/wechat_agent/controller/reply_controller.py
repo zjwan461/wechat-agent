@@ -83,3 +83,17 @@ def delete_ai_role(ids):
     finally:
         session.close()
     return jsonify(success())
+
+
+@reply_bp.route('/api/reply/listGroup')
+def listGroup():
+    session = SqliteSqlalchemy().session
+    try:
+        list = session.query(Reply).group_by(Reply.group).all()
+        list_group = []
+        if list and len(list) > 0:
+            for item in list:
+                list_group.append(item.group)
+    finally:
+        session.close()
+    return jsonify(success(list_group))
