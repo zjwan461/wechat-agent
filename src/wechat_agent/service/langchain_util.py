@@ -1,8 +1,7 @@
-from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage, SystemMessage
-from langchain_ollama import ChatOllama
-from langchain.memory import ConversationBufferWindowMemory
 from langchain.chains.conversation.base import ConversationChain
+from langchain.memory import ConversationBufferWindowMemory
+from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 
 memory_cache = {}
 
@@ -55,11 +54,9 @@ def chat_block_open_ai(
         max_tokens=2048,
         top_p=0.9,
         timeout=60):
-    # 聊天模型调用（需传入消息列表，区分角色）
     messages = [
-        SystemMessage(content=system_message),
-        HumanMessage(content=human_message)]
-
+        {"role": "system", "content": system_message},
+        {"role": "user", "content": human_message}]
     chat_model = ChatOpenAI(
         model=model,
         temperature=temperature,
@@ -70,12 +67,19 @@ def chat_block_open_ai(
         timeout=timeout,
     )
     memory = get_memory(str(agent_id) + ":" + model)
-    chain = ConversationChain(llm=chat_model, memory=memory)
+    chain = ConversationChain(llm=chat_model, memory=memory, verbose=True)
     return chain.invoke(messages)['response']
 
 
 if __name__ == '__main__':
-    content = chat_block_ollama(1,"qwen3:8b", "你叫花花，是一个AI助手。回答保证语言干练，不要超过500个字", "花花，我今天打了篮球")
+    # content = chat_block_ollama(1,"qwen3:8b", "你叫花花，是一个AI助手。回答保证语言干练，不要超过500个字", "花花，我今天打了篮球")
+    # print(content)
+    # content = chat_block_ollama(1,"qwen3:8b", "你叫花花，是一个AI助手。回答保证语言干练，不要超过500个字", "@花花")
+    # print(content)
+    content = chat_block_open_ai(1, "qwen3-8b", "http://10.100.216.70:8000/v1", "test",
+                                 "你叫花花，是一个AI助手。回答保证语言干练，不要超过500个字", "花花，我今天打了篮球")
     print(content)
-    content = chat_block_ollama(1,"qwen3:8b", "你叫花花，是一个AI助手。回答保证语言干练，不要超过500个字", "@花花")
+
+    content = chat_block_open_ai(1, "qwen3-8b", "http://10.100.216.70:8000/v1", "test",
+                                 "你叫花花，是一个AI助手。回答保证语言干练，不要超过500个字", "花花，我好累")
     print(content)

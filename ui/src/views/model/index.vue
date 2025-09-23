@@ -37,7 +37,11 @@
         </el-table-column>
         <el-table-column label="base_url" prop="base_url"/>
         <el-table-column label="max_tokens" prop="max_tokens"/>
-        <el-table-column label="api_key" prop="api_key"/>
+        <el-table-column label="api_key" prop="api_key">
+          <template slot-scope="scope">
+            <div>{{ scope.row.api_key.substring(0, 1) + '******'}}</div>
+          </template>
+        </el-table-column>
         <el-table-column label="temperature" prop="temperature"/>
         <el-table-column label="top_k" prop="top_k"/>
         <el-table-column label="top_p" prop="top_p"/>
@@ -76,7 +80,7 @@
           <el-input v-model="form.base_url" placeholder="请输入base url" clearable/>
         </el-form-item>
         <el-form-item label="api_key" prop="api_key">
-          <el-input v-model="form.api_key" placeholder="请输入api_key" clearable/>
+          <el-input type="password" v-model="form.api_key" placeholder="请输入api_key" clearable/>
         </el-form-item>
         <el-form-item label="max_tokens" prop="max_tokens">
           <el-input-number :step="100" v-model="form.max_tokens" placeholder="请输入max_tokens"

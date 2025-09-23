@@ -29,3 +29,11 @@ class ChatType(Enum):
 class WechatVersion(Enum):
     V3 = "V3"
     V4 = "V4"
+
+
+def from_value(enum_cls, value):
+    """根据value获取对应的枚举成员"""
+    for member in enum_cls.__members__.values():
+        if member.value == value:
+            return member
+    return None

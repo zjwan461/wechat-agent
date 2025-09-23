@@ -2,9 +2,10 @@ from flask import request, Blueprint, jsonify
 
 from wechat_agent.service.db_util import SqliteSqlalchemy, Model
 from wechat_agent.domain.ajax_result import success, pageResp
-from wechat_agent.service.langchain_util import chat_block_open_ai
+from wechat_agent.service.langchain_util import chat_block_open_ai, chat_block_ollama
 from wechat_agent.logger_config import get_logger
 from wechat_agent.controller.service_error import ApiError
+from wechat_agent.SysEnum import from_value, AiProvider
 
 logger = get_logger(__name__)
 
@@ -104,10 +105,17 @@ def delete_ai_role(ids):
 
 
 def check_llm(model: Model):
+    provider = from_value(AiProvider, model.provider)
+    if provider is None:
+        raise ApiError("不支持的模型提供商")
     try:
-        resp = chat_block_open_ai(model=model.name, base_url=model.base_url,
-                                  api_key=model.api_key if model.api_key is not None else 'test',
-                                  system_message='你是一个AI助手', human_message='hello')
+        if provider == AiProvider.OpenAI:
+            resp = chat_block_open_ai(agent_id='check', model=model.name, base_url=model.base_url,
+                                      api_key=model.api_key if model.api_key is not None else 'test',
+                                      system_message='你是一个AI助手', human_message='hello')
+        else:
+            resp = chat_block_ollama(agent_id='check', model=model.name, base_url=model.base_url,
+                                     system_message='你是一个AI助手', human_message='hello')
         logger.info(f'llm测试成功,resp={resp}')
         return True
     except Exception as e:
