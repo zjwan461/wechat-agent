@@ -55,6 +55,8 @@
         <el-table-column label="创建时间" prop="create_time" sortable/>
         <el-table-column label="操作">
           <template slot-scope="scope">
+            <el-button type="text" @click="handleStart(scope.row)" v-if="scope.row.status === '已停止'">启动</el-button>
+            <el-button type="text" @click="handleStop(scope.row)" v-if="scope.row.status === '运行中'">停止</el-button>
             <el-button type="text" @click="handleEdit(scope.row)">编辑</el-button>
             <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
           </template>
@@ -270,9 +272,14 @@ export default {
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage
       this.getList()
-    }
+    },
+    handleStart(row) {
 
-  },
+    },
+    handleStop(row) {
+
+    }
+  }
 }
 </script>
 

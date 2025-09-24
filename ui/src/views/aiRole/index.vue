@@ -61,7 +61,7 @@
           <el-input v-model="form.name" placeholder="请输入人设名称" :maxlength="25" show-word-limit clearable/>
         </el-form-item>
         <el-form-item label="提示词" prop="prompt">
-          <el-input type="textarea" :rows="10" v-model="form.prompt" placeholder="请输入提示词" :maxlength="1000"
+          <el-input type="textarea" :rows="20" v-model="form.prompt" placeholder="请输入提示词" :maxlength="1000"
                     show-word-limit clearable/>
         </el-form-item>
       </el-form>
