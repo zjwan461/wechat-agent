@@ -65,7 +65,11 @@ export default {
         if (!valid) return
         updateSetting(this.setting).then(res => {
           if (res.code === 0) {
-            this.$message.success('保存成功')
+            if (this.setting.wechat_version === 'V4') {
+              this.$message.warning('4.0+版本存在一些bug，建议使用3.9+版本微信')
+            } else {
+              this.$message.success('保存成功')
+            }
           }
         })
       })

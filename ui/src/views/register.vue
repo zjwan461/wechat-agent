@@ -121,10 +121,14 @@ export default {
         if (!valid) return
         register(this.registerForm).then(response => {
           if (response.code === 0) {
-            this.$message.success('注册成功,即将返回登录页')
-            this.$router.push('/login')
-          } else {
-
+            if (this.registerForm.wechat_version === 'V4') {
+              this.$message.warning('4.0+版本存在一些bug，建议使用3.9+版本微信')
+            } else {
+              this.$message.success('注册成功, 即将返回登录页')
+            }
+            setTimeout(() => {
+              this.$router.push('/login')
+            }, 1000)
           }
         })
       })

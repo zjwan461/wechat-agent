@@ -99,6 +99,9 @@
             <el-option v-for="(item,index) in reply_groups" :key="index" :value="item" :label="item"/>
           </el-select>
         </el-form-item>
+        <el-form-item label="记忆轮次" prop="memory_size" v-show="form.type === 'AI'">
+          <el-input-number :min="1" :max="10" v-model="form.memory_size"/>
+        </el-form-item>
         <el-form-item label="AI模型" prop="model_id" v-show="form.type === 'AI'">
           <el-select v-model="form.model_id">
             <el-option v-for="item in model_list" :key="item.id" :value="item.id" :label="item.name"/>
@@ -229,6 +232,7 @@ export default {
     },
     reset() {
       this.form = {
+        memory_size: 3,
         chat_type: 'PRIVATE',
         type: 'AI'
       }

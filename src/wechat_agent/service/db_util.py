@@ -60,6 +60,7 @@ class Agent(BaseEntity):
     chat_type = Column(String(50), nullable=False, default=ChatType.PRIVATE.value)
     type = Column(String(50), nullable=False, default=AgentType.SIMPLE.value)
     reply_group = Column(String(50))
+    memory_size = Column(Integer, nullable=False, default=3)
     model_id = Column(Integer)
     ai_role_id = Column(Integer)
     status = Column(String(50), nullable=False, default=AgentStatus.STOPPED.value)

@@ -73,7 +73,7 @@ def create_agent():
     try:
         agent = Agent(name=req["name"], nickname=req.get('nickname'), chat_type=req.get('chat_type'),
                       type=req.get('type'), reply_group=req.get('reply_group'), model_id=req.get('model_id'),
-                      ai_role_id=req.get('ai_role_id'))
+                      ai_role_id=req.get('ai_role_id'), memory_size=req.get('memory_size'))
         session.add(agent)
         session.commit()
     finally:
@@ -95,6 +95,7 @@ def update_agent():
             agent.reply_group = req.get('reply_group')
             agent.model_id = req.get('model_id')
             agent.ai_role_id = req.get('ai_role_id')
+            agent.memory_size = req.get('memory_size')
         session.commit()
     finally:
         session.close()

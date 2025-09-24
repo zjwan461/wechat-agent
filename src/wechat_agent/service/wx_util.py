@@ -13,8 +13,8 @@ def get_wechat_version(wechat_exe_path):
         return None
 
     # 确保路径是Weixin.exe
-    if not wechat_exe_path.endswith("Weixin.exe"):
-        logger.error("错误: 请提供Weixin.exe的完整路径")
+    if not wechat_exe_path.endswith("Weixin.exe") and not wechat_exe_path.endswith("WeChat.exe") :
+        logger.error("错误: 请提供Weixin.exe/WeChat.exe的完整路径")
 
     try:
         # 处理路径中的反斜杠，适应wmic命令要求
