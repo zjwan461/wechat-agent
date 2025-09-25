@@ -169,7 +169,8 @@ def start_agent(id: int):
                 reply_contents.append(reply.content)
             simple_chat(wechat_version, my_wechat_names, agent.nickname, reply_contents, agent.chat_type)
         elif agent.type == AgentType.AI.value:
-            pass
+            ai_chat(wechat_version, my_wechat_names, agent.nickname, agent.model_id, agent.ai_role_id,
+                    agent.memory_size, agent.chat_type)
         else:
             raise ApiError(f"不支持的智慧助手类型:{agent.type}")
 
@@ -199,3 +200,8 @@ def simple_chat(wechat_version, my_wechat_names, nickname, reply_list: list[str]
         start_wxauto_listening(wechat_version, nickname, chat_group)
     else:
         raise ApiError(f'不支持的聊天类型：{chat_type}')
+
+
+def ai_chat(wechat_version, my_wechat_names, nickname, model: Model, ai_role: AiRole, memory_size: int, chat_type: str):
+    # todo
+    raise ApiError('暂不支持的AI类型的智慧助手')

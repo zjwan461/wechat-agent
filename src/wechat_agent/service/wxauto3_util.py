@@ -6,6 +6,7 @@ from wxauto.msgs.friend import FriendTextMessage
 
 from wechat_agent.SysEnum import WechatReplyType
 from wechat_agent.logger_config import get_logger
+from wechat_agent.controller.service_error import ApiError
 
 logger = get_logger(__name__)
 
@@ -17,9 +18,10 @@ class WeXinAuto3Service:
         self.wx = WeChat()
 
     def listen(self, nickname: str, msg_handler: Callable):
-        if nickname not in self.msg_handlers:
-            logger.info(f"开始监听{nickname}的微信消息")
-            self.msg_handlers[nickname] = msg_handler
+        if nickname in self.msg_handlers:
+            raise ApiError(f"已经监听了{nickname}的微信消息,请先关闭已开启的监听")
+        logger.info(f"开始监听{nickname}的微信消息")
+        self.msg_handlers[nickname] = msg_handler
         return self.wx.AddListenChat(nickname=nickname, callback=self.on_message)
 
     def remove_listen(self, nickname: str):
