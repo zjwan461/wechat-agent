@@ -5,6 +5,7 @@ import GPUtil
 import psutil
 from wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
 from wechat_agent.conf import sys_info_id
+import wmi
 
 
 def get_cpu_info():
@@ -55,7 +56,6 @@ def get_gpu_info():
             result.append(item)
     else:
         if platform.system() == 'Windows':
-            import wmi
             try:
                 c = wmi.WMI()
                 for gpu in c.Win32_VideoController():

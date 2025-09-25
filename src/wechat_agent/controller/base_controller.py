@@ -63,6 +63,7 @@ def update_setting():
     req = request.json
     wechat_install_path = req["wechat_install_path"]
     version = req.get('wechat_version')
+    my_wechat_names = req.get('my_wechat_names')
     if version is None or len(version) == 0:
         version = get_wechat_version(wechat_install_path)
         if version is None:
@@ -78,11 +79,12 @@ def update_setting():
     try:
         sys_info = session.query(SysInfo).get(sys_info_id)
         if sys_info is not None:
-            sys_info.model_dir_dir = req["model_save_dir"]
+            sys_info.model_dir_dir = req.get("model_save_dir")
             sys_info.wechat_install_path = wechat_install_path
             sys_info.wechat_version = version
-            sys_info.proxy_host = req["proxy_host"]
-            sys_info.proxy_port = req["proxy_port"]
+            sys_info.my_wechat_names = my_wechat_names
+            sys_info.proxy_host = req.get("proxy_host")
+            sys_info.proxy_port = req.get("proxy_port")
         session.commit()
         return jsonify(success())
     except Exception as e:

@@ -12,24 +12,29 @@ class WeXinAuto3Service:
         self.wx = WeChat()
 
     def listen(self, nickname: str):
-        self.wx.AddListenChat(nickname=nickname, callback=self.on_message)
-        self.wx.KeepRunning()
+        return self.wx.AddListenChat(nickname=nickname, callback=self.on_message)
+
+    def remove_listen(self, nickname: str):
+        return self.wx.RemoveListenChat(nickname=nickname)
 
     def on_message(self, msg: BaseMessage, chat: Chat):
-        print(f"receive from {chat.ChatInfo()['chat_name']}`s msg: {msg.content}")
+        nickname = chat.ChatInfo()['chat_name']
+        content = msg.content
+        print(f"receive from {nickname}`s msg: {content}")
         if isinstance(msg, FriendTextMessage):
-            resp = self.msg_handler(msg.content)
-            msg.reply(resp)
+            resp = self.msg_handler(nickname, content)
+            if resp is not None:
+                msg.reply(resp)
 
     def stop_listening(self):
         return self.wx.StopListening()
 
 
-def handler(msg):
-    return "haha"
-
-
 if __name__ == '__main__':
+    def handler(msg, nickname):
+        return "haha"
+
+
     service = WeXinAuto3Service(handler)
-    service.listen("文件传输助手")
-    #
+    service.listen("假洒脱")
+    service.wx.KeepRunning()

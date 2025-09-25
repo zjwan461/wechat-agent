@@ -70,7 +70,7 @@ def register():
                                version=version, username=req["username"],
                                password=calculate_md5(req["password"]), email=req["email"],
                                model_save_dir=model_save_dir, wechat_install_path=wechat_install_path,
-                               wechat_version=wechat_version)
+                               wechat_version=wechat_version, my_wechat_names=req.get('my_wechat_names'))
             session.add(sys_info)
         else:
             sys_info.os_arch = os_info['arch']

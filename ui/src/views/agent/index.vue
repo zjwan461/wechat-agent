@@ -36,12 +36,12 @@
         <el-table-column label="好友昵称" prop="nickname"/>
         <el-table-column label="聊天类型" prop="chat_type">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.chat_type === 'PRIVATE' ? 'success' : 'primary'">{{ scope.row.chat_type }}</el-tag>
+            <el-tag :type="scope.row.chat_type === '私聊' ? 'success' : 'primary'">{{ scope.row.chat_type }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="助手类型" prop="type">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.type === 'SIMPLE' ? 'success' : 'primary'">{{ scope.row.type }}</el-tag>
+            <el-tag :type="scope.row.type === '指定回复' ? 'success' : 'primary'">{{ scope.row.type }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="回复群组" prop="reply_group"/>
@@ -84,30 +84,30 @@
         </el-form-item>
         <el-form-item label="聊天类型" prop="chat_type">
           <el-radio-group v-model="form.chat_type">
-            <el-radio label="PRIVATE">私聊</el-radio>
-            <el-radio label="GROUP">群聊</el-radio>
+            <el-radio label="私聊">私聊</el-radio>
+            <el-radio label="群聊">群聊</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="助手类型" prop="type">
           <el-radio-group v-model="form.type">
-            <el-radio label="SIMPLE">指定回复</el-radio>
-            <el-radio label="AI">AI回复</el-radio>
+            <el-radio label="指定回复">指定回复</el-radio>
+            <el-radio label="AI回复">AI回复</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="回复群组" prop="reply_group" v-show="form.type ==='SIMPLE'">
+        <el-form-item label="回复群组" prop="reply_group" v-show="form.type ==='指定回复'">
           <el-select v-model="form.reply_group" multiple :multiple-limit="3">
             <el-option v-for="(item,index) in reply_groups" :key="index" :value="item" :label="item"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="记忆轮次" prop="memory_size" v-show="form.type === 'AI'">
+        <el-form-item label="记忆轮次" prop="memory_size" v-show="form.type === 'AI回复'">
           <el-input-number :min="1" :max="10" v-model="form.memory_size"/>
         </el-form-item>
-        <el-form-item label="AI模型" prop="model_id" v-show="form.type === 'AI'">
+        <el-form-item label="AI模型" prop="model_id" v-show="form.type === 'AI回复'">
           <el-select v-model="form.model_id">
             <el-option v-for="item in model_list" :key="item.id" :value="item.id" :label="item.name"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="人设" prop="ai_role_id" v-show="form.type === 'AI'">
+        <el-form-item label="人设" prop="ai_role_id" v-show="form.type === 'AI回复'">
           <el-select v-model="form.ai_role_id">
             <el-option v-for="item in ai_role_list" :key="item.id" :value="item.id" :label="item.name"/>
           </el-select>
@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import {listAgent, getAgent, createAgent, updateAgent, deleteAgent} from '@/apis/agent/agent'
+import {listAgent, getAgent, createAgent, updateAgent, deleteAgent, startAgent} from '@/apis/agent/agent'
 import {listModel} from '@/apis/model/model'
 import {listRole} from '@/apis/aiRole/aiRole'
 import {getReplyGroups} from '@/apis/reply/reply'
@@ -233,8 +233,8 @@ export default {
     reset() {
       this.form = {
         memory_size: 3,
-        chat_type: 'PRIVATE',
-        type: 'AI'
+        chat_type: '私聊',
+        type: 'AI回复'
       }
       if (this.$refs['agentForm']) {
         this.$refs['agentForm'].resetFields()
@@ -253,7 +253,10 @@ export default {
       const id = row.id || this.ids
       getAgent(id).then(response => {
         this.form = response.data
-        this.open = true
+        if (this.form.reply_group) {
+          this.form.reply_group = this.form.reply_group.split(',')
+        }
+        this.open = true;
         this.title = '修改AI智能体'
       })
       this.getModels()
@@ -278,7 +281,12 @@ export default {
       this.getList()
     },
     handleStart(row) {
-
+      startAgent(row.id).then(res => {
+        if (res.code === 0) {
+          this.$message.success('启动成功')
+          this.getList()
+        }
+      })
     },
     handleStop(row) {
 

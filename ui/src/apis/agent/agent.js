@@ -37,3 +37,10 @@ export function deleteAgent(ids) {
     method: 'delete'
   })
 }
+
+export function startAgent(id) {
+  return request({
+    url: '/api/agent/start/' + id,
+    method: 'post'
+  })
+}

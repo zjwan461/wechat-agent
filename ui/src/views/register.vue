@@ -66,6 +66,25 @@
               <el-option label="V4" value=V4>V4</el-option>
             </el-select>
           </el-form-item>
+          <el-form-item
+            label="微信昵称"
+            prop="my_wechat_names"
+          >
+            <el-select
+              v-model="registerForm.my_wechat_names"
+              multiple
+              filterable
+              allow-create
+              default-first-option
+              placeholder="你的微信昵称，可配置多个，考虑到在群聊中可能拥有不同的昵称">
+              <!--              <el-option
+                              v-for="item in options"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                            </el-option>-->
+            </el-select>
+          </el-form-item>
           <el-form-item>
             <el-button
               type="primary"
@@ -107,10 +126,18 @@ export default {
           {validator: rePwd, trigger: 'blur', required: true}
         ],
         email: [
-          {pattern: /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/, trigger: 'blur', required: true}
+          {
+            pattern: /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/,
+            trigger: 'blur',
+            required: true,
+            message: '邮箱格式非法'
+          }
         ],
         wechat_install_path: [
           {required: true, message: '请输入微信安装目录', trigger: 'blur'}
+        ],
+        my_wechat_names: [
+          {required: true, message: '请输入你的微信昵称', trigger: 'blur'}
         ]
       }
     }
@@ -119,6 +146,9 @@ export default {
     onSubmit(value) {
       this.$refs[value].validate(valid => {
         if (!valid) return
+        if (this.registerForm.my_wechat_names) {
+          this.registerForm.my_wechat_names = this.registerForm.my_wechat_names.join(',')
+        }
         register(this.registerForm).then(response => {
           if (response.code === 0) {
             if (this.registerForm.wechat_version === 'V4') {

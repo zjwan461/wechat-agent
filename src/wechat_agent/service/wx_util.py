@@ -1,6 +1,11 @@
 import os
 import subprocess
+from typing import Callable
+
 from wechat_agent.logger_config import get_logger
+from wechat_agent.service.wxauto3_util import WeXinAuto3Service
+from wechat_agent.service.wxauto4_util import WeXinAuto4Service
+from wechat_agent.SysEnum import WechatVersion
 
 logger = get_logger(__name__)
 
@@ -13,7 +18,7 @@ def get_wechat_version(wechat_exe_path):
         return None
 
     # 确保路径是Weixin.exe
-    if not wechat_exe_path.endswith("Weixin.exe") and not wechat_exe_path.endswith("WeChat.exe") :
+    if not wechat_exe_path.endswith("Weixin.exe") and not wechat_exe_path.endswith("WeChat.exe"):
         logger.error("错误: 请提供Weixin.exe/WeChat.exe的完整路径")
 
     try:
@@ -40,6 +45,22 @@ def get_wechat_version(wechat_exe_path):
     except Exception as e:
         logger.error(f"发生错误: {str(e)}")
     return None
+
+
+wxauto_service_holder = {}
+
+
+def start_wxauto_service(version, nickname, msg_handler: Callable):
+    wxauto_service = wxauto_service_holder.get("service")
+    if wxauto_service is None:
+        if version == WechatVersion.V3.value:
+            wxauto_service = WeXinAuto3Service(msg_handler)
+            wxauto_service_holder["service"] = wxauto_service
+        else:
+            wxauto_service = WeXinAuto4Service(msg_handler)
+            wxauto_service_holder["service"] = wxauto_service
+
+    wxauto_service.listen(nickname)
 
 
 if __name__ == "__main__":

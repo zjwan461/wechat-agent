@@ -50,6 +50,7 @@ class SysInfo(BaseEntity):
     proxy_port = Column(Integer)
     wechat_install_path = Column(String(255), nullable=False)
     wechat_version = Column(String(50), nullable=False, default=WechatVersion.V3.value)
+    my_wechat_names = Column(String(500), nullable=False)
 
 
 class Agent(BaseEntity):

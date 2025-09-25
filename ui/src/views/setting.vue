@@ -20,6 +20,25 @@
                 <el-option label="V4" value=V4>V4</el-option>
               </el-select>
             </el-form-item>
+            <el-form-item
+              label="微信昵称"
+              prop="my_wechat_names"
+            >
+              <el-select
+                v-model="setting.my_wechat_names"
+                multiple
+                filterable
+                allow-create
+                default-first-option
+                placeholder="你的微信昵称，可配置多个，考虑到在群聊中可能拥有不同的昵称">
+                <el-option
+                  v-for="item in setting.my_wechat_names"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="代理地址" prop="proxy_host">
               <el-input v-model="setting.proxy_host" placeholder="代理地址"></el-input>
             </el-form-item>
@@ -52,6 +71,9 @@ export default {
         wechat_install_path: [
           {required: true, message: '请输入微信安装目录', trigger: 'blur'}
         ],
+        my_wechat_names: [
+          {required: true, message: '请输入你的微信昵称', trigger: 'blur'}
+        ]
       },
       setting: {}
     }
@@ -63,7 +85,11 @@ export default {
     save() {
       this.$refs['setting'].validate(valid => {
         if (!valid) return
-        updateSetting(this.setting).then(res => {
+        let req = {...this.setting}
+        if (req.my_wechat_names) {
+          req.my_wechat_names = req.my_wechat_names.join(',')
+        }
+        updateSetting(req).then(res => {
           if (res.code === 0) {
             if (this.setting.wechat_version === 'V4') {
               this.$message.warning('4.0+版本存在一些bug，建议使用3.9+版本微信')
@@ -71,12 +97,16 @@ export default {
               this.$message.success('保存成功')
             }
           }
-        })
+        });
       })
     },
     getSettings() {
       getSetting().then(res => {
-        this.setting = res.data
+        let data = res.data
+        if (data.my_wechat_names) {
+          data.my_wechat_names = data.my_wechat_names.split(',')
+        }
+        this.setting = data
       })
     },
 
