@@ -18,17 +18,19 @@ class WeXinAuto3Service:
 
     def listen(self, nickname: str, msg_handler: Callable):
         if nickname not in self.msg_handlers:
+            logger.info(f"开始监听{nickname}的微信消息")
             self.msg_handlers[nickname] = msg_handler
         return self.wx.AddListenChat(nickname=nickname, callback=self.on_message)
 
     def remove_listen(self, nickname: str):
+        logger.info(f"停止监听{nickname}的微信消息")
         self.msg_handlers.pop(nickname)
         return self.wx.RemoveListenChat(nickname=nickname)
 
     def on_message(self, msg: BaseMessage, chat: Chat):
         nickname = chat.ChatInfo()['chat_name']
         content = msg.content
-        logger.info(f"receive from {nickname}`s msg: {content}")
+        logger.info(f"收到来自{nickname}的消息: {content}")
         if isinstance(msg, FriendTextMessage):
             msg_handler = self.msg_handlers[nickname]
             resp, resp_type = msg_handler(nickname, content)
@@ -38,7 +40,7 @@ class WeXinAuto3Service:
                 elif resp_type == WechatReplyType.QUOTE:
                     msg.quote(resp)
                 else:
-                    logger.warning(f'unknown resp type: {resp_type}, will use reply to handle it')
+                    logger.warning(f'未知的回复类型: {resp_type}, 将回复为普通回复')
                     msg.reply(resp)
 
     def stop_listening(self):
