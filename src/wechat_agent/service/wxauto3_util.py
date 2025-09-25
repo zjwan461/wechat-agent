@@ -12,14 +12,17 @@ logger = get_logger(__name__)
 
 class WeXinAuto3Service:
 
-    def __init__(self, msg_handler: Callable):
-        self.msg_handler = msg_handler
+    def __init__(self):
+        self.msg_handlers = {}
         self.wx = WeChat()
 
-    def listen(self, nickname: str):
+    def listen(self, nickname: str, msg_handler: Callable):
+        if nickname not in self.msg_handlers:
+            self.msg_handlers[nickname] = msg_handler
         return self.wx.AddListenChat(nickname=nickname, callback=self.on_message)
 
     def remove_listen(self, nickname: str):
+        self.msg_handlers.pop(nickname)
         return self.wx.RemoveListenChat(nickname=nickname)
 
     def on_message(self, msg: BaseMessage, chat: Chat):
@@ -27,7 +30,8 @@ class WeXinAuto3Service:
         content = msg.content
         logger.info(f"receive from {nickname}`s msg: {content}")
         if isinstance(msg, FriendTextMessage):
-            resp, resp_type = self.msg_handler(nickname, content)
+            msg_handler = self.msg_handlers[nickname]
+            resp, resp_type = msg_handler(nickname, content)
             if resp is not None:
                 if resp_type == WechatReplyType.REPLY:
                     msg.reply(resp)
@@ -43,9 +47,9 @@ class WeXinAuto3Service:
 
 if __name__ == '__main__':
     def handler(msg, nickname):
-        return "haha"
+        return "haha", WechatReplyType.REPLY
 
 
-    service = WeXinAuto3Service(handler)
-    service.listen("假洒脱")
+    service = WeXinAuto3Service()
+    service.listen("假洒脱", handler)
     service.wx.KeepRunning()

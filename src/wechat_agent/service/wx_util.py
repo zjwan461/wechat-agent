@@ -54,15 +54,13 @@ def start_wxauto_listening(version, nickname, msg_handler: Callable):
     wxauto_service = wxauto_service_holder.get("service")
     if wxauto_service is None:
         if version == WechatVersion.V3.value:
-            wxauto_service = WeXinAuto3Service(msg_handler)
+            wxauto_service = WeXinAuto3Service()
             wxauto_service_holder["service"] = wxauto_service
         else:
-            wxauto_service = WeXinAuto4Service(msg_handler)
+            wxauto_service = WeXinAuto4Service()
             wxauto_service_holder["service"] = wxauto_service
-    else:
-        wxauto_service.msg_handler = msg_handler
 
-    wxauto_service.listen(nickname)
+    wxauto_service.listen(nickname, msg_handler)
 
 
 def stop_wxauto_listening(nickname):
