@@ -44,3 +44,10 @@ export function startAgent(id) {
     method: 'post'
   })
 }
+
+export function stopAgent(id) {
+  return request({
+    url: '/api/agent/stop/' + id,
+    method: 'post'
+  })
+}

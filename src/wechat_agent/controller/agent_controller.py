@@ -2,12 +2,13 @@ import random
 
 from flask import Blueprint, jsonify, request
 
-from wechat_agent.SysEnum import AgentType, AgentStatus, ChatType
+from wechat_agent.SysEnum import AgentType, AgentStatus, ChatType, WechatReplyType
 from wechat_agent.controller.service_error import ApiError
 from wechat_agent.domain.ajax_result import pageResp, success
 from wechat_agent.service.db_util import SqliteSqlalchemy, Agent, AiRole, Model, Reply, SysInfo
-from wechat_agent.service.wx_util import start_wxauto_service
+from wechat_agent.service.wx_util import start_wxauto_listening, stop_wxauto_listening
 from wechat_agent.conf import sys_info_id
+import pythoncom
 
 agent_bp = Blueprint('agent_bp', __name__)
 
@@ -124,7 +125,24 @@ def delete_agent(ids):
     return jsonify(success())
 
 
-agent_context = {}
+@agent_bp.route('/api/agent/stop/<id>', methods=["POST"])
+def stop_agent(id: int):
+    session = SqliteSqlalchemy().session
+    try:
+        agent = session.query(Agent).get(id)
+        if agent is None:
+            raise ApiError(f"找不到id={id}的智慧助手")
+
+        if agent.status == AgentStatus.STOPPED.value:
+            raise ApiError('当前智慧助手不在运行状态')
+
+        pythoncom.CoInitializeEx(pythoncom.COINIT_APARTMENTTHREADED)
+        stop_wxauto_listening(nickname=agent.nickname)
+        agent.status = AgentStatus.STOPPED.value
+        session.commit()
+    finally:
+        session.close()
+    return jsonify(success())
 
 
 @agent_bp.route('/api/agent/start/<id>', methods=["POST"])
@@ -135,10 +153,9 @@ def start_agent(id: int):
         if agent is None:
             raise ApiError(f"找不到id={id}的智慧助手")
 
-        if agent.id in agent_context:
-            raise ApiError("当前智慧助手已在运行")
+        if agent.status == AgentStatus.STARTED.value:
+            raise ApiError('当前智慧助手运行中')
 
-        import pythoncom
         pythoncom.CoInitializeEx(pythoncom.COINIT_APARTMENTTHREADED)
 
         sys_info = session.query(SysInfo).get(sys_info_id)
@@ -156,7 +173,6 @@ def start_agent(id: int):
         else:
             raise ApiError(f"不支持的智慧助手类型:{agent.type}")
 
-        agent_context[agent.id] = agent.to_dic()
         agent.status = AgentStatus.STARTED.value
         session.commit()
     finally:
@@ -168,9 +184,9 @@ def start_agent(id: int):
 def simple_chat(wechat_version, my_wechat_names, nickname, reply_list: list[str], chat_type: str):
     if chat_type == ChatType.PRIVATE.value:
         def chat_private(nickname, content):
-            return random.choice(reply_list)
+            return random.choice(reply_list), WechatReplyType.REPLY
 
-        start_wxauto_service(wechat_version, nickname, chat_private)
+        start_wxauto_listening(wechat_version, nickname, chat_private)
     elif chat_type == ChatType.GROUP.value:
         def chat_group(nickname: str, content: str):
             at_me = False
@@ -178,7 +194,8 @@ def simple_chat(wechat_version, my_wechat_names, nickname, reply_list: list[str]
                 if content.startswith(f'@{wechat_name}'):
                     at_me = True
                     break
-            return random.choice(reply_list) if at_me else None
+            return random.choice(reply_list) if at_me else None, WechatReplyType.QUOTE
 
+        start_wxauto_listening(wechat_version, nickname, chat_group)
     else:
         raise ApiError(f'不支持的聊天类型：{chat_type}')

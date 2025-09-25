@@ -31,6 +31,11 @@ class WechatVersion(Enum):
     V4 = "V4"
 
 
+class WechatReplyType(Enum):
+    REPLY = "回复"
+    QUOTE = "引用"
+
+
 def from_value(enum_cls, value):
     """根据value获取对应的枚举成员"""
     for member in enum_cls.__members__.values():

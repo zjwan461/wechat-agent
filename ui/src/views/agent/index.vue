@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import {listAgent, getAgent, createAgent, updateAgent, deleteAgent, startAgent} from '@/apis/agent/agent'
+import {listAgent, getAgent, createAgent, updateAgent, deleteAgent, startAgent, stopAgent} from '@/apis/agent/agent'
 import {listModel} from '@/apis/model/model'
 import {listRole} from '@/apis/aiRole/aiRole'
 import {getReplyGroups} from '@/apis/reply/reply'
@@ -256,7 +256,7 @@ export default {
         if (this.form.reply_group) {
           this.form.reply_group = this.form.reply_group.split(',')
         }
-        this.open = true;
+        this.open = true
         this.title = '修改AI智能体'
       })
       this.getModels()
@@ -281,15 +281,26 @@ export default {
       this.getList()
     },
     handleStart(row) {
-      startAgent(row.id).then(res => {
-        if (res.code === 0) {
-          this.$message.success('启动成功')
-          this.getList()
-        }
+      this.$confirm('请确认是否开启id=' + row.id + '的智慧助手？', '提示').then(res => {
+        startAgent(row.id).then(res => {
+          if (res.code === 0) {
+            this.$message.success('启动成功')
+            this.getList()
+          }
+        })
+      }).catch(() => {
       })
     },
     handleStop(row) {
-
+      this.$confirm('请确认是否停止id=' + row.id + '的智慧助手？', '提示').then(res => {
+        stopAgent(row.id).then(res => {
+          if (res.code === 0) {
+            this.$message.success('关闭成功')
+            this.getList()
+          }
+        })
+      }).catch(() => {
+      })
     }
   }
 }

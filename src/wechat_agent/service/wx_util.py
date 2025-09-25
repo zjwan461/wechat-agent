@@ -50,7 +50,7 @@ def get_wechat_version(wechat_exe_path):
 wxauto_service_holder = {}
 
 
-def start_wxauto_service(version, nickname, msg_handler: Callable):
+def start_wxauto_listening(version, nickname, msg_handler: Callable):
     wxauto_service = wxauto_service_holder.get("service")
     if wxauto_service is None:
         if version == WechatVersion.V3.value:
@@ -59,8 +59,18 @@ def start_wxauto_service(version, nickname, msg_handler: Callable):
         else:
             wxauto_service = WeXinAuto4Service(msg_handler)
             wxauto_service_holder["service"] = wxauto_service
+    else:
+        wxauto_service.msg_handler = msg_handler
 
     wxauto_service.listen(nickname)
+
+
+def stop_wxauto_listening(nickname):
+    wxauto_service = wxauto_service_holder.get("service")
+    if wxauto_service is None:
+        logger.warning("not found wxauto service in wxauto_service_holder")
+    else:
+        wxauto_service.remove_listen(nickname)
 
 
 if __name__ == "__main__":
