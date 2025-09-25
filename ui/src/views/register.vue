@@ -146,10 +146,11 @@ export default {
     onSubmit(value) {
       this.$refs[value].validate(valid => {
         if (!valid) return
-        if (this.registerForm.my_wechat_names) {
-          this.registerForm.my_wechat_names = this.registerForm.my_wechat_names.join(',')
+        let req = { ...this.registerForm }
+        if (req.my_wechat_names) {
+          req.my_wechat_names = req.my_wechat_names.join(',')
         }
-        register(this.registerForm).then(response => {
+        register(req).then(response => {
           if (response.code === 0) {
             if (this.registerForm.wechat_version === 'V4') {
               this.$message.warning('4.0+版本存在一些bug，建议使用3.9+版本微信')

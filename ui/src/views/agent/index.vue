@@ -191,11 +191,12 @@ export default {
     submitForm() {
       this.$refs['agentForm'].validate(valid => {
         if (!valid) return
-        if (this.form.reply_group) {
-          this.form.reply_group = this.form.reply_group.join(',')
+        let req = { ...this.form }
+        if (req.reply_group) {
+          req.reply_group = req.reply_group.join(',')
         }
-        if (this.form.id != null) {
-          updateAgent(this.form).then(res => {
+        if (req.id != null) {
+          updateAgent(req).then(res => {
             if (res.code === 0) {
               this.$message.success('修改成功')
               this.open = false
@@ -203,7 +204,7 @@ export default {
             }
           })
         } else {
-          createAgent(this.form).then(res => {
+          createAgent(req).then(res => {
             if (res.code === 0) {
               this.$message.success('新增成功')
               this.open = false
