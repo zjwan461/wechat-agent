@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify, request
 from wechat_agent.SysEnum import AgentType, AgentStatus, ChatType, WechatReplyType, AiProvider
 from wechat_agent.controller.service_error import ApiError
 from wechat_agent.domain.ajax_result import pageResp, success
-from wechat_agent.service.db_util import SqliteSqlalchemy, Agent, AiRole, Model, Reply, SysInfo
+from wechat_agent.service.db_util import SqliteSqlalchemy, Agent, AiRole, Model, Reply, SysInfo, ChatHistory
 from wechat_agent.service.wx_util import start_wxauto_listening, stop_wxauto_listening
 from wechat_agent.conf import sys_info_id
 import pythoncom
@@ -191,24 +191,34 @@ def start_agent(id: int):
     return jsonify(success())
 
 
-def simple_chat(wechat_version, my_wechat_names, nickname, reply_list: list[str], chat_type: str):
-    if chat_type == ChatType.PRIVATE.value:
-        def chat_private(nickname, content):
-            return random.choice(reply_list), WechatReplyType.REPLY
+def simple_chat(wechat_version, my_wechat_names, nickname, reply_list: list[str], agent: Agent):
+    if agent.chat_type == ChatType.PRIVATE.value:
+        def chat_private(nickname, sender, content):
+            save_chat_msg(nickname, content, sender, agent.to_dic())
+            resp = random.choice(reply_list)
+            save_chat_msg(nickname, resp, AgentType.SIMPLE.value, agent.to_dic())
+            return resp, WechatReplyType.REPLY
 
         start_wxauto_listening(wechat_version, nickname, chat_private)
-    elif chat_type == ChatType.GROUP.value:
-        def chat_group(nickname: str, content: str):
+    elif agent.chat_type == ChatType.GROUP.value:
+        def chat_group(nickname: str, sender: str, content: str):
             at_me = False
             for wechat_name in my_wechat_names.split(','):
                 if content.startswith(f'@{wechat_name}'):
                     at_me = True
                     break
-            return random.choice(reply_list) if at_me else None, WechatReplyType.QUOTE
+            if at_me:
+                # todo
+                save_chat_msg(nickname, content, sender, agent.to_dic())
+                resp = random.choice(reply_list)
+                save_chat_msg(nickname, content, AgentType.SIMPLE.value, agent.to_dic())
+            else:
+                resp = None
+            return resp, WechatReplyType.QUOTE
 
         start_wxauto_listening(wechat_version, nickname, chat_group)
     else:
-        raise ApiError(f'不支持的聊天类型：{chat_type}')
+        raise ApiError(f'不支持的聊天类型：{agent.chat_type}')
 
 
 def ai_chat(wechat_version, my_wechat_names, nickname, model: dict, agent: dict, ai_role: dict):
@@ -226,19 +236,42 @@ def ai_chat(wechat_version, my_wechat_names, nickname, model: dict, agent: dict,
                                       model.get("temperature"), model.get("max_tokens"), model.get("top_p"))
 
     if agent["chat_type"] == ChatType.PRIVATE.value:
-        def chat_private(nickname, content):
-            return do_ai_chat(content), WechatReplyType.REPLY
+        def chat_private(nickname, sender, content):
+            save_chat_msg(nickname, content, sender, agent)
+            resp = do_ai_chat(content)
+            save_chat_msg(nickname, content, AgentType.AI.value, agent)
+            return resp, WechatReplyType.REPLY
 
         start_wxauto_listening(wechat_version, nickname, chat_private)
     elif agent["chat_type"] == ChatType.GROUP.value:
-        def chat_group(nickname: str, content: str):
+        def chat_group(nickname: str, sender: str, content: str):
             at_me = False
             for wechat_name in my_wechat_names.split(','):
                 if content.startswith(f'@{wechat_name}'):
                     at_me = True
                     break
-            return do_ai_chat(f"{nickname}说: {content}") if at_me else None, WechatReplyType.QUOTE
+            if at_me:
+                # todo
+                save_chat_msg(nickname, content, sender, agent)
+                resp = do_ai_chat(f"{nickname}说: {content}")
+                save_chat_msg(nickname, content, AgentType.AI.value, agent)
+            else:
+                resp = None
+
+            return resp, WechatReplyType.QUOTE
 
         start_wxauto_listening(wechat_version, nickname, chat_group)
     else:
         raise ApiError(f'不支持的聊天类型：{agent["chat_type"]}')
+
+
+def save_chat_msg(nickname: str, content: str, create_by: str, agent: dict):
+    session = SqliteSqlalchemy().session
+    try:
+        chat_history = ChatHistory(agent_id=agent.get("id"), nickname=nickname, chat_type=agent.get("chat_type"),
+                                   agent_type=agent.get("type"), content=content, create_by=create_by)
+
+        session.add(chat_history)
+        session.commit()
+    finally:
+        session.close()

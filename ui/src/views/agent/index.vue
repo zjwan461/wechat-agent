@@ -133,11 +133,13 @@ export default {
       if (this.form.type === 'AI回复' && (!value || value.length === 0)) {
         return callback(new Error('智能体类型为AI回复时,此项必填'))
       }
+      return callback()
     }
     const simpleTypeRequired = (rule, value, callback) => {
       if (this.form.type === '指定回复' && (!value || value.length === 0)) {
         return callback(new Error('智能体类型为指定回复时,此项必填'))
       }
+      return callback()
     }
     return {
       model_list: [],
@@ -210,7 +212,7 @@ export default {
     submitForm() {
       this.$refs['agentForm'].validate(valid => {
         if (!valid) return
-        let req = {...this.form}
+        let req = { ...this.form }
         if (req.reply_group) {
           req.reply_group = req.reply_group.join(',')
         }

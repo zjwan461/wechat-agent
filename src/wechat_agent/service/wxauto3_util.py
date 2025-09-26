@@ -33,10 +33,11 @@ class WeXinAuto3Service:
     def on_message(self, msg: BaseMessage, chat: Chat):
         nickname = chat.ChatInfo()['chat_name']
         content = msg.content
-        logger.info(f"收到来自{nickname}的消息: {content}")
+        sender = msg.sender or msg.sender_remark
+        logger.info(f"收到来自{nickname}聊天窗口{sender}的消息: {content}")
         if isinstance(msg, FriendTextMessage):
             msg_handler = self.msg_handlers[nickname]
-            resp, resp_type = msg_handler(nickname, content)
+            resp, resp_type = msg_handler(nickname, sender, content)
             if resp is not None:
                 if resp_type == WechatReplyType.REPLY:
                     msg.reply(resp)

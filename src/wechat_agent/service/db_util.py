@@ -95,6 +95,17 @@ class Model(BaseEntity):
     top_p = Column(Double(), default=0.9)
 
 
+class ChatHistory(BaseEntity):
+    __tablename__ = 'chat_history'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    agent_id = Column(Integer, nullable=False)
+    nickname = Column(String(100), nullable=False)
+    chat_type = Column(String(50), nullable=False)
+    agent_type = Column(String(50), nullable=False)
+    content = Column(Text(), nullable=False)
+    create_by = Column(String(100), nullable=False)
+
+
 class SqliteSqlalchemy(object):
     def __init__(self):
         # 创建Sqlite连接引擎
