@@ -39,7 +39,7 @@
     "children": [
       {
         "id": 21,
-        "title": "历史消息",
+        "title": "消息列表",
         "icon": "el-icon-s-grid",
         "href": "/history-msg"
       }

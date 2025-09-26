@@ -46,6 +46,10 @@ const routes = [{
     path: '/model',
     name: 'model',
     component: () => import('../views/model/index.vue')
+  }, {
+    path: '/history-msg',
+    name: 'historyMsg',
+    component: () => import('../views/history/index.vue')
   }
   ]
 }]

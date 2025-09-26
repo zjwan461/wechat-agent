@@ -208,10 +208,9 @@ def simple_chat(wechat_version, my_wechat_names, nickname, reply_list: list[str]
                     at_me = True
                     break
             if at_me:
-                # todo
                 save_chat_msg(nickname, content, sender, agent.to_dic())
                 resp = random.choice(reply_list)
-                save_chat_msg(nickname, content, AgentType.SIMPLE.value, agent.to_dic())
+                save_chat_msg(nickname, resp, AgentType.SIMPLE.value, agent.to_dic())
             else:
                 resp = None
             return resp, WechatReplyType.QUOTE
@@ -239,7 +238,7 @@ def ai_chat(wechat_version, my_wechat_names, nickname, model: dict, agent: dict,
         def chat_private(nickname, sender, content):
             save_chat_msg(nickname, content, sender, agent)
             resp = do_ai_chat(content)
-            save_chat_msg(nickname, content, AgentType.AI.value, agent)
+            save_chat_msg(nickname, resp, AgentType.AI.value, agent)
             return resp, WechatReplyType.REPLY
 
         start_wxauto_listening(wechat_version, nickname, chat_private)
@@ -251,10 +250,9 @@ def ai_chat(wechat_version, my_wechat_names, nickname, model: dict, agent: dict,
                     at_me = True
                     break
             if at_me:
-                # todo
                 save_chat_msg(nickname, content, sender, agent)
                 resp = do_ai_chat(f"{nickname}说: {content}")
-                save_chat_msg(nickname, content, AgentType.AI.value, agent)
+                save_chat_msg(nickname, resp, AgentType.AI.value, agent)
             else:
                 resp = None
 

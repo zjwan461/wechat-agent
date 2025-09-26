@@ -12,6 +12,7 @@ from wechat_agent.controller.agent_controller import agent_bp
 from wechat_agent.controller.ai_role_controller import ai_role_bp
 from wechat_agent.controller.reply_controller import reply_bp
 from wechat_agent.controller.model_controller import model_bp
+from wechat_agent.controller.history_controller import history_bp
 
 app = Flask(__name__, static_url_path='/ui', static_folder='ui')
 app.secret_key = SECRET_KEY
@@ -21,6 +22,7 @@ app.register_blueprint(agent_bp)
 app.register_blueprint(ai_role_bp)
 app.register_blueprint(reply_bp)
 app.register_blueprint(model_bp)
+app.register_blueprint(history_bp)
 
 logger = get_logger()
 
