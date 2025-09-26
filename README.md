@@ -1,21 +1,37 @@
 # wechat-agent
 
-[![PyPI - Version](https://img.shields.io/pypi/v/wechat-agent.svg)](https://pypi.org/project/wechat-agent)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/wechat-agent.svg)](https://pypi.org/project/wechat-agent)
+wechat-agent是一个Windows平台下能够自动化回复微信消息的代理应用程序。可以使用它来自动回复一些规则下的微信消息。wechat-agent提供两种代理模式。
+1. 指定回复（简单）模式
+2. AI回复（AI问答）模式
+
+wechat-agent默认运行在 http://127.0.0.1:8080
 
 -----
 
-## Table of Contents
+## 说明
 
-- [Installation](#installation)
-- [License](#license)
+- [安装](#安装)
+- [运行](#运行)
 
-## Installation
+## 安装
 
-```console
-pip install wechat-agent
+```shell
+git clone https://gitee.com/zjwan461/wechat-agent.git
+cd wechat-agent
+pip install -e .
+cd ui
+npm install
 ```
 
-## License
+## 运行
 
-`wechat-agent` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+开发接入
+
+```shell
+# 前端
+cd ui
+npm run dev
+# 后端
+python main.py
+```
+
