@@ -39,16 +39,13 @@ dependencies = [
     "wmi~=1.5.1"
 ]
 
-[project.optional-dependencies]
-build = [
-    "pyinstaller>=6.0.0",
-    "hatchling>=1.21.0",
-]
-
 [project.urls]
 Documentation = "https://gitee.com/zjwan461/wechat-agent#readme"
 Issues = "https://gitee.com/zjwan461/wechat-agent/issues"
 Source = "https://gitee.com/zjwan461/wechat-agent"
+
+[project.scripts]
+wechat-agent = "wechat_agent.main:main"
 
 [tool.hatch.version]
 path = "src/wechat_agent/__about__.py"
@@ -78,16 +75,6 @@ exclude_lines = [
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
 ]
-
-[tool.hatch.envs.build]
-dependencies = [
-    "pyinstaller>=6.0.0",
-]
-
-[tool.hatch.envs.build.scripts]
-exe = "pyinstaller src/wechat_agent/main.py --name wechat-agent --onefile --clean --noconfirm"
-exe-debug = "pyinstaller src/wechat_agent/main.py --name wechat-agent --onefile --clean --noconfirm --debug all"
-
 
 [tool.hatch.build]
 include = ["src/**/*"]

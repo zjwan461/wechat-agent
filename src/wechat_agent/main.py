@@ -1,4 +1,4 @@
-from conf import token_header, token_prefix, token_white_list, SECRET_KEY, server_host, server_port
+from wechat_agent.conf import token_header, token_prefix, token_white_list, SECRET_KEY, server_host, server_port
 from flask import Flask, request, jsonify, session, g
 from wechat_agent.logger_config import get_logger
 import re
@@ -84,5 +84,9 @@ def unknow_error_handle(e: Exception):
     return jsonify(error("system is too busy")), 500
 
 
-if __name__ == "__main__":
+def main():
     app.run(host=server_host, port=server_port)
+
+
+if __name__ == "__main__":
+    main()
