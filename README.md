@@ -4,8 +4,6 @@ wechat-agent是一个Windows平台下能够自动化回复微信消息的代理�
 1. 指定回复（简单）模式
 2. AI回复（AI问答）模式
 
-wechat-agent默认运行在 http://127.0.0.1:8080
-
 -----
 
 ## 说明
@@ -15,6 +13,8 @@ wechat-agent默认运行在 http://127.0.0.1:8080
 
 ## 安装
 
+### 本地开发依赖安装
+
 ```shell
 git clone https://gitee.com/zjwan461/wechat-agent.git
 cd wechat-agent
@@ -22,6 +22,13 @@ pip install -e .
 cd ui
 npm install
 ```
+浏览器访问 http://127.0.0.1:8001/ui
+
+### 直接安装
+```shell
+pip install wechat-agent
+```
+浏览器访问 http://127.0.0.1:8080/ui/index.html
 
 ## 运行
 
