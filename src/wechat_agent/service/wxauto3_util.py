@@ -26,7 +26,8 @@ class WeXinAuto3Service:
 
     def remove_listen(self, nickname: str):
         logger.info(f"停止监听{nickname}的微信消息")
-        self.msg_handlers.pop(nickname)
+        if nickname in self.msg_handlers:
+            self.msg_handlers.pop(nickname)
         return self.wx.RemoveListenChat(nickname=nickname)
 
     def on_message(self, msg: BaseMessage, chat: Chat):

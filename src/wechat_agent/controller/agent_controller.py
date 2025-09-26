@@ -2,13 +2,15 @@ import random
 
 from flask import Blueprint, jsonify, request
 
-from wechat_agent.SysEnum import AgentType, AgentStatus, ChatType, WechatReplyType
+from wechat_agent.SysEnum import AgentType, AgentStatus, ChatType, WechatReplyType, AiProvider
 from wechat_agent.controller.service_error import ApiError
 from wechat_agent.domain.ajax_result import pageResp, success
 from wechat_agent.service.db_util import SqliteSqlalchemy, Agent, AiRole, Model, Reply, SysInfo
 from wechat_agent.service.wx_util import start_wxauto_listening, stop_wxauto_listening
 from wechat_agent.conf import sys_info_id
 import pythoncom
+from wechat_agent.service.langchain_util import chat_block_ollama, chat_block_open_ai, memory_cache
+from wechat_agent.SysEnum import from_value
 
 agent_bp = Blueprint('agent_bp', __name__)
 
@@ -138,6 +140,12 @@ def stop_agent(id: int):
 
         pythoncom.CoInitializeEx(pythoncom.COINIT_APARTMENTTHREADED)
         stop_wxauto_listening(nickname=agent.nickname)
+
+        if agent.type == AgentType.AI.value:
+            model = session.query(Model).get(agent.model_id)
+            key = str(agent.id) + ":" + model.name
+            if key in memory_cache:
+                memory_cache.pop(key)
         agent.status = AgentStatus.STOPPED.value
         session.commit()
     finally:
@@ -169,8 +177,9 @@ def start_agent(id: int):
                 reply_contents.append(reply.content)
             simple_chat(wechat_version, my_wechat_names, agent.nickname, reply_contents, agent.chat_type)
         elif agent.type == AgentType.AI.value:
-            ai_chat(wechat_version, my_wechat_names, agent.nickname, agent.model_id, agent.ai_role_id,
-                    agent.memory_size, agent.chat_type)
+            model = session.query(Model).get(agent.model_id)
+            ai_role = session.query(AiRole).get(agent.ai_role_id)
+            ai_chat(wechat_version, my_wechat_names, agent.nickname, model.to_dic(), agent.to_dic(), ai_role.to_dic())
         else:
             raise ApiError(f"不支持的智慧助手类型:{agent.type}")
 
@@ -202,6 +211,34 @@ def simple_chat(wechat_version, my_wechat_names, nickname, reply_list: list[str]
         raise ApiError(f'不支持的聊天类型：{chat_type}')
 
 
-def ai_chat(wechat_version, my_wechat_names, nickname, model: Model, ai_role: AiRole, memory_size: int, chat_type: str):
-    # todo
-    raise ApiError('暂不支持的AI类型的智慧助手')
+def ai_chat(wechat_version, my_wechat_names, nickname, model: dict, agent: dict, ai_role: dict):
+    def do_ai_chat(content):
+        ai_provider = from_value(AiProvider, model["provider"])
+        prompt = ai_role.get("prompt").format(nickname=nickname)
+        if ai_provider == AiProvider.Ollama:
+            return chat_block_ollama(agent.get("id"), model.get("name"), prompt, content,
+                                     model.get("base_url"),
+                                     model.get("temperature"),
+                                     model.get("top_k"), model.get("top_p"))
+        else:
+            return chat_block_open_ai(agent.get("id"), model.get("name"), model.get("base_url"), model.get("api_key"),
+                                      prompt, content,
+                                      model.get("temperature"), model.get("max_tokens"), model.get("top_p"))
+
+    if agent["chat_type"] == ChatType.PRIVATE.value:
+        def chat_private(nickname, content):
+            return do_ai_chat(content), WechatReplyType.REPLY
+
+        start_wxauto_listening(wechat_version, nickname, chat_private)
+    elif agent["chat_type"] == ChatType.GROUP.value:
+        def chat_group(nickname: str, content: str):
+            at_me = False
+            for wechat_name in my_wechat_names.split(','):
+                if content.startswith(f'@{wechat_name}'):
+                    at_me = True
+                    break
+            return do_ai_chat(f"{nickname}说: {content}") if at_me else None, WechatReplyType.QUOTE
+
+        start_wxauto_listening(wechat_version, nickname, chat_group)
+    else:
+        raise ApiError(f'不支持的聊天类型：{agent["chat_type"]}')

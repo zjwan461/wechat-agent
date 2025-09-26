@@ -129,6 +129,16 @@ import {getReplyGroups} from '@/apis/reply/reply'
 
 export default {
   data() {
+    const aiTypeRequired = (rule, value, callback) => {
+      if (this.form.type === 'AI回复' && (!value || value.length === 0)) {
+        return callback(new Error('智能体类型为AI回复时,此项必填'))
+      }
+    }
+    const simpleTypeRequired = (rule, value, callback) => {
+      if (this.form.type === '指定回复' && (!value || value.length === 0)) {
+        return callback(new Error('智能体类型为指定回复时,此项必填'))
+      }
+    }
     return {
       model_list: [],
       ai_role_list: [],
@@ -146,6 +156,15 @@ export default {
         ],
         nickname: [
           {required: true, message: '好友昵称必填', trigger: 'blur'}
+        ],
+        reply_group: [
+          {validator: simpleTypeRequired, trigger: 'blur'}
+        ],
+        model_id: [
+          {validator: aiTypeRequired, trigger: 'blur'}
+        ],
+        ai_role_id: [
+          {validator: aiTypeRequired, trigger: 'blur'}
         ],
       },
       form: {},
@@ -191,7 +210,7 @@ export default {
     submitForm() {
       this.$refs['agentForm'].validate(valid => {
         if (!valid) return
-        let req = { ...this.form }
+        let req = {...this.form}
         if (req.reply_group) {
           req.reply_group = req.reply_group.join(',')
         }

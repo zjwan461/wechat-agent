@@ -6,6 +6,8 @@ from wechat_agent.logger_config import get_logger
 from wechat_agent.service.wxauto3_util import WeXinAuto3Service
 from wechat_agent.service.wxauto4_util import WeXinAuto4Service
 from wechat_agent.SysEnum import WechatVersion
+from wxauto.param import WxResponse
+from wechat_agent.controller.service_error import ApiError
 
 logger = get_logger(__name__)
 
@@ -60,7 +62,10 @@ def start_wxauto_listening(version, nickname, msg_handler: Callable):
             wxauto_service = WeXinAuto4Service()
             wxauto_service_holder["service"] = wxauto_service
 
-    wxauto_service.listen(nickname, msg_handler)
+    response = wxauto_service.listen(nickname, msg_handler)
+    if isinstance(response, WxResponse):
+        if not response.is_success:
+            raise ApiError(f'启动监听失败: {response.to_dict()["message"]}')
 
 
 def stop_wxauto_listening(nickname):
