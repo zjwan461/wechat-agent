@@ -28,6 +28,10 @@ npm install
 ```shell
 pip install wechat-agent
 ```
+运行
+```shell
+wechat-agent
+```
 浏览器访问 http://127.0.0.1:8080/ui/index.html
 
 ## 运行

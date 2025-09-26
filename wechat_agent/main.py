@@ -2,7 +2,7 @@ from wechat_agent.conf import token_header, token_prefix, token_white_list, SECR
 from flask import Flask, request, jsonify, session, g
 from wechat_agent.logger_config import get_logger
 import re
-
+from waitress import serve
 from wechat_agent.controller.service_error import ApiError
 from wechat_agent.domain.ajax_result import error
 from wechat_agent.service.jwt_util import verify_token
@@ -85,8 +85,8 @@ def unknow_error_handle(e: Exception):
 
 
 def main():
-    app.run(host=server_host, port=server_port)
-
+    # app.run(host=server_host, port=server_port)
+    serve(app, host=server_host, port=server_port)
 
 if __name__ == "__main__":
     main()

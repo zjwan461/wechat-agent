@@ -36,7 +36,8 @@ def get_logger(name=__name__, log_level=logging.INFO):
 
     # 2. 文件处理器 - 按天分割日志文件，保留30天
     # 创建日志目录
-    log_dir = str(Path(__file__).parent.parent.parent / "logs")
+    user_dir = os.path.join(os.path.expanduser('~'))
+    log_dir = user_dir + "/wechat-agent/logs"
     os.makedirs(log_dir, exist_ok=True)
 
     # 日志文件名格式

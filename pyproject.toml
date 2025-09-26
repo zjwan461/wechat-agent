@@ -36,7 +36,8 @@ dependencies = [
     "flask~=3.1.2",
     "pyjwt~=2.10.1",
     "GPUtil~=1.4.0",
-    "wmi~=1.5.1"
+    "wmi~=1.5.1",
+    "waitress~=3.0.2"
 ]
 
 [project.urls]
@@ -48,36 +49,10 @@ Source = "https://gitee.com/zjwan461/wechat-agent"
 wechat-agent = "wechat_agent.main:main"
 
 [tool.hatch.version]
-path = "src/wechat_agent/__about__.py"
-
-[tool.hatch.envs.types]
-extra-dependencies = [
-    "mypy>=1.0.0",
-]
-[tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/wechat_agent tests}"
-
-[tool.coverage.run]
-source_pkgs = ["wechat_agent", "tests"]
-branch = true
-parallel = true
-omit = [
-    "src/wechat_agent/__about__.py",
-]
-
-[tool.coverage.paths]
-wechat_agent = ["src/wechat_agent", "*/wechat-agent/src/wechat_agent"]
-tests = ["tests", "*/wechat-agent/tests"]
-
-[tool.coverage.report]
-exclude_lines = [
-    "no cov",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
-]
+path = "wechat_agent/__about__.py"
 
 [tool.hatch.build]
-include = ["src/**/*"]
+include = ["wechat_agent/**/*"]
 exclude = ["ui/**/*"]
 
 [tool.hatch.publish]
