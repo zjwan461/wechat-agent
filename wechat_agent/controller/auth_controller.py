@@ -104,7 +104,7 @@ def refresh_token():
     req = request.get_json()
     refresh_token = req["refreshToken"]
     user_id = session.get(refresh_token)
-    if user_id != None:
+    if user_id is None:
         new_token = token_prefix + generate_token(user_id)
         session[new_token] = user_id
         return jsonify(success(new_token))
