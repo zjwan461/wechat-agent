@@ -7,3 +7,5 @@ logs
 wechat_agent/ui
 dist/
 build/
+main.build/
+main.dist/
