@@ -53,7 +53,6 @@ path = "wechat_agent/__about__.py"
 
 [tool.hatch.build]
 include = ["wechat_agent/**/*"]
-exclude = ["ui/**/*"]
 
 [tool.hatch.publish]
 repo = { pypi = { } }
