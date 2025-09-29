@@ -33,12 +33,12 @@ def get_ai_role(id):
     session = SqliteSqlalchemy().session
     try:
         ai_role = session.query(AiRole).get(id)
-        if ai_role is None:
-            return jsonify(success())
-        else:
-            return jsonify(success(ai_role.to_dic()))
     finally:
         session.close()
+    if ai_role is None:
+        return jsonify(success())
+    else:
+        return jsonify(success(ai_role.to_dic()))
 
 
 @ai_role_bp.route("/api/aiRole/create", methods=["POST"])
