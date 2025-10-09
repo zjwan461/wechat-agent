@@ -9,3 +9,4 @@ dist/
 build/
 main.build/
 main.dist/
+*.spec

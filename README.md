@@ -48,4 +48,7 @@ npm run dev
 # 后端
 python main.py
 ```
-
+## 打包
+```shell
+ pyinstaller -F --add-data "ui;ui" --add-data "nav.json;nav.json" --name wechat-agent main.py
+```
