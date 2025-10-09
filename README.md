@@ -56,7 +56,7 @@ python main.py
     pip install pyinstaller
 
     # 构建本地可执行的exe程序包
-    pyinstaller -F --add-data "ui;ui" --add-data "nav.json;nav.json" --name wechat-agent main.py
+    pyinstaller -F --add-data "ui;ui" --add-data "nav.json;." --name wechat-agent main.py
     ```
 - 打包whl
 

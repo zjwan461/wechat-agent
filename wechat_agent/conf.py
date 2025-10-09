@@ -12,3 +12,4 @@ db_url = "sqlite:///{0}/wechat-agent/db/wxa.db"
 sys_info_id = 1
 SECRET_KEY = "your-secret-key-keep-it-safe"
 token_timeout = 30
+running_env = os.getenv('wa_env', 'command')

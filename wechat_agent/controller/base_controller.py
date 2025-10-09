@@ -5,11 +5,12 @@ from flask import Blueprint, request, jsonify
 
 from wechat_agent.controller.service_error import ApiError
 from wechat_agent.domain.ajax_result import success
-from wechat_agent.conf import gitee_url, github_url, sys_info_id, server_host, server_port
+from wechat_agent.conf import gitee_url, github_url, sys_info_id, server_host, server_port,running_env
 from wechat_agent.service import systemInfo_util
 from wechat_agent.service.db_util import SqliteSqlalchemy, SysInfo
 from wechat_agent.service.wx_util import get_wechat_version
 from wechat_agent.SysEnum import WechatVersion
+from wechat_agent.service.common_util import resource_path
 
 base_bp = Blueprint('base_bp', __name__)
 
@@ -31,7 +32,12 @@ def sys_info():
 
 @base_bp.route("/api/base/nav")
 def nav():
-    nav_path = str(Path(__file__).parent.parent / "nav.json")
+    if running_env == "command":
+        nav_path = str(Path(__file__).parent.parent / "nav.json")
+    elif running_env == "exe":
+        nav_path = resource_path("nav.json")
+    else:
+        nav_path = str(Path(__file__).parent.parent / "nav.json")
     with open(nav_path, "r", encoding="utf-8") as f:
         conf = f.read()
         json_data = json.loads(conf)
