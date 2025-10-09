@@ -48,7 +48,25 @@ npm run dev
 # 后端
 python main.py
 ```
-## 打包
-```shell
- pyinstaller -F --add-data "ui;ui" --add-data "nav.json;nav.json" --name wechat-agent main.py
-```
+## 构建打包
+- 打包本地可运行的exe
+
+    ```shell
+    # 安装pyinstaller构建工具
+    pip install pyinstaller
+
+    # 构建本地可执行的exe程序包
+    pyinstaller -F --add-data "ui;ui" --add-data "nav.json;nav.json" --name wechat-agent main.py
+    ```
+- 打包whl
+
+    ```shell
+    # 安装hatch构建工具
+    pip install hatch
+
+    # 构建本地whl包
+    hatch build
+
+    # 发布远端pypi仓库
+    hatch publish
+    ```
